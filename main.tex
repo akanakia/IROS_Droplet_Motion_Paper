@@ -1,0 +1,126 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\documentclass[letterpaper, 10pt, conference]{IEEEtran}
+\documentclass[letterpaper, 10pt, conference]{ieeeconf}
+\IEEEoverridecommandlockouts
+\overrideIEEEmargins 
+\usepackage{tikz}
+\usetikzlibrary{calc,decorations.markings}
+\usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{xifthen}
+\usepackage{amsfonts}
+\usepackage{tabu}
+\usepackage{graphicx}
+\usepackage[font=small]{caption}
+\usepackage{subcaption}
+\usepackage{cite}
+\usepackage{xspace}
+\usepackage{subfiles}
+
+%
+%Once I break this in to multiple sections, each section will be added with:
+%	\subfile{filename}
+%In those other files, I have as preamble:
+%	\documentclass[main.tex]{subfiles}
+%
+
+\title{\LARGE \bf
+Hurray Droplets Can Walk
+}
+
+\author{ John Klingner and ??? and Dustin Reishus and Nikolaus Correll%
+\thanks{Department of Computer Science,
+University of Colorado at Boulder,
+ Boulder, CO 80309,
+{\tt\small firstname.lastname{@}colorado.edu}}%
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+ABSTRACT GOES HERE
+\end{abstract}
+
+\section{Introduction}
+State how the platform is intended to be a low cost swarm-robotics platform, so we want to be able to make a lot of them.
+
+Motion principle is essentially the same as why a vibrating phone moves across a tabletop.
+
+\section{Droplet Hardware}
+***FLESH THIS OUT***
+Part numbers for the motors and motor drivers at least? XMega chip information, a little bit about IR communication. Talk about how the motors are incosistent about which way they spin.
+
+\section{Model/Theory Stuff}
+
+\subsection{Base Motion Principle}
+A vibration motor is simply a motor with a mass on the shaft, such that the center of mass is not the on the axis of rotation. Spinning the motor ``throws the mass around'', causing motion of the motor. To understand why this works, note that as the mass swings through its circular path, the motor experiences a force towards that mass. Over the course of a full rotation, the net force experience by the motor is 0. See Figure~\ref{motorDiagram} helps to illustrate why this works.
+
+\begin{figure}
+\centering
+%\includegraphics[width=\linewidth]{images/motorDiagram.png}
+\caption{PLACEHOLDER. Simple 1DoF model of motion principle, from the side.}
+\label{motorDiagram}
+\end{figure}
+
+To achieve 1DoF motion using this principle, we must mount the motor on some sort of platform. If we neglect friction, the platform will slide backwards and forwards due to the backwards and forwards forces frome mass, but experience no net translation. With friction, the vertical forces of the mass become relevant. The downward force of gravity is mitigated by the upward force from the swinging mass. Crucially, this means that the total downward force experienced by the platform is lower while the mass is swinging upwards. Thus, the platform experiences reduced friction while the mass is swinging upwards. The direction of lateral magnitude during this period of reduced friction (or, the direction the motor is spinning) determines the direction of travel. \cite{Vartholomeos2005,Vartholomeos2006} go in to more mathematical detail of this model.
+
+\subsection{Motion Principle Applied to Droplets}
+
+Now we will take that 1DoF model and apply it to our 3DoF robotics platform. See Figure~\ref{dropletMotorDiagram} for reference. Here, we deviate from \cite{Vartholomeos2005} by positioning our motors opposite the platform's legs. With the simplifying assumption that the platform is a uniform mass, lets consider the forces applied to the platform as a single motor rotates. Since the platform touches the floor only with its three legs, it will be relevant to consider the downward force on each leg separately ($f_i$ for forces, $m_i$ for motors?)
+
+\begin{figure}
+\centering
+%\includegraphics[width=\linewidth]{images/dropletMotorDiagram.png}
+\caption{PLACEHOLDER. Droplets motion principle, now looking from above.}
+\label{dropletMotorDiagram}
+\end{figure}
+
+***SHOULD ACTUALLY DO THIS MATH AND HAVE EQUATIONS.***
+
+As the mass on the motor swings upwards, the friction experienced by each leg is reduced. Moreover, it is reduced more for the two legs nearest the motor. The lateral force by the motor -- which is tangent to the circle of the platform's three legs -- thus causes the platform to pivot about the leg opposite it. By spinning the motor in the other direction, the platform pivots in the other direction.
+
+***TALK ABOUT HOW WE GO FROM PIVOTS TO 3DOF MOTION***
+
+By restricting ourselves to these small-pivot ``steps'', we avoid the requirements of precise balance and motor-phase syncronization that causes trouble with more direct implementations \cite{Vartholomeos2006}.
+
+To simplify, we focus on the platform moving in one of six directions: (0,180, $+/-$60, $+/-$120) degrees, as well as clockwise and counterclockwise rotation. It should be a straightforward extension to get arbitrary 3DoF motion by combining these directions.
+
+ There are still some difficulties to overcome with physical implementation. In particular, requiring that each step be of consistent size causes trouble. Variations in the manufacture of our motors and platform mean that the robot must be calibrated to ensure consistent step size.
+
+\section{Autocalibration}
+
+It is possible to clalibrate each platform manually, by setting values and eyeballing how well they work. As stated earlier, however, this platform is motivated by a desire for low-cost, large scale robot swarms.  Manual calibration of a swarm of thousands of robots would be completely impractical, and so we automate the process.
+
+We communicate with and control the platform through serial to IR (using the same platform without legs or motors as a glorified serial-to-IR converter). 
+
+Calibration is done as a looped series of steps in which we:
+\begin{enumerate}
+\item Tell the Droplet to walk in some direction.
+\item Measure the Droplet's position and orientation until enough data has been collected.
+\item Tell the Droplet to stop walking.
+\item Use the collected data to update its calibration settings.
+\end{enumerate}
+Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam CINEMA ***DOUBLE CHECK THIS***}, and RoboRealm \cite{RoboRealm}. A fiducial marking is taped to the top of the platform to aid in tracking and orientation calculations. Specifically, we collect the position (x,y coordinate) and orientation of the Droplet in each frame.
+
+To update the Droplet's calibration settings, we find the least-squares best-fit circle of the collected coordinates. Specifically, the circle's radius and whether it is on the Droplet's left or right. While calibrating for walking straight, we optimize for maximizing the radius of the fitted circle (if the Droplet travelled perfectly straight, the radius would by infinite). While calibrating for spinning, we optimize for minimizing the radius of the fitted circle (a perfect spin would have radius 0).
+
+\section{Future Work}
+Ditch the whole computer vision set up and use the Droplet's IR communication and range and bearing powers to get data and have the swarm calibrate itself.
+
+Get arbitrary 3DoF motion by combining directions.
+
+\section{Conclusion}
+Conclusory stuff here.
+
+\section*{Acknowledgments}
+Acknowledge some grants and stuff, here.
+
+\bibliographystyle{ieeetr}
+\bibliography{mybibfile}
+
+\end{document}
+

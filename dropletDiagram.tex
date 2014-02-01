@@ -1,0 +1,49 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\begin{tikzpicture}[scale=1.5,shorten >=1pt,auto,semithick,>=to,decoration={markings,mark=at position 0.5 with {\arrow{>}}}]
+	\def\txX{3cm}
+	\def\txY{3cm}
+	\def\txPhi{120}
+	\def\rxPhi{0}
+	\def\rxExAngle{90}
+	\def\txExAngle{30}
+	\pgfmathsetmacro{\ourTheta}{atan(\txY/\txX)}
+	\pgfmathsetmacro{\rxExX}{cos(\rxPhi+\rxExAngle)}
+	\pgfmathsetmacro{\rxExY}{sin(\rxPhi+\rxExAngle)}
+	\pgfmathsetmacro{\txExX}{cos(\txPhi+\txExAngle)}
+	\pgfmathsetmacro{\txExY}{sin(\txPhi+\txExAngle)}
+	\pgfmathsetmacro{\sensorX}{cos(\rxExAngle)}
+	\pgfmathsetmacro{\sensorY}{sin(\rxExAngle)}
+	\pgfmathsetmacro{\emitterX}{cos(\txExAngle)+\txX}
+	\pgfmathsetmacro{\emitterY}{sin(\txExAngle)+\txY}
+
+	\pgfmathsetmacro{\alphaAngle}{atan2(\sensorX-\emitterX ,\sensorY-\emitterY) - \rxExAngle +180}
+
+	\pgfmathsetmacro{\betaAngle}{atan2(\emitterX-\sensorX,\emitterY-\sensorY ) - \txExAngle - \txPhi + 180}
+	\def\phiArcRadius{0.2cm}
+	\def\thetaArcRadius{0.3cm}
+
+	%RX Droplet 
+	\draw[thick] (0cm,0cm) circle(1cm);
+	\draw[gray] (0cm,0cm) - - (\rxPhi:1cm);
+	\draw (-60+\rxPhi:0.25cm) node[inner sep=0mm,circle,fill=white] {WORDS};
+	\foreach \i in {1,...,6} {
+		\draw[gray,->] (\i*-60+30+\rxPhi:0.8cm) -- (\i*-60+30+\rxPhi:1cm);
+		\draw (\i*-60+30+\rxPhi:0.75cm) node[inner sep=0mm,circle,fill=white] {$\hat{\mathbf{\i}}$};
+	}
+	%phiTX arc 
+	\draw[gray,dashed] (0cm,0cm) -- (\txPhi:1cm);
+	\draw[thin,->] (\rxPhi:\phiArcRadius) arc (\rxPhi:\txPhi:\phiArcRadius);
+	\node[inner sep=0mm, fill=white] at (-\ourTheta*0.5+\txPhi*0.5 + \ourTheta-5:\phiArcRadius+0.15cm) {$\phi$};
+
+	%theta arc
+	\draw[thin,->] (\rxPhi:\thetaArcRadius) arc (\rxPhi:\ourTheta:\thetaArcRadius);
+	\node[inner sep=0mm, fill=white] at (-\rxPhi*0.5+\ourTheta*0.5 + \rxPhi:\thetaArcRadius+0.15cm) {$\theta$};
+
+\end{tikzpicture}
+
+
+
+\end{document}
