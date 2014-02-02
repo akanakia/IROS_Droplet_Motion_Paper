@@ -2,45 +2,43 @@
 
 \begin{document}
 
-\begin{tikzpicture}[scale=1.5,shorten >=1pt,auto,semithick,>=to,decoration={markings,mark=at position 0.5 with {\arrow{>}}}]
-	\def\txX{3cm}
-	\def\txY{3cm}
-	\def\txPhi{120}
-	\def\rxPhi{0}
-	\def\rxExAngle{90}
-	\def\txExAngle{30}
-	\pgfmathsetmacro{\ourTheta}{atan(\txY/\txX)}
-	\pgfmathsetmacro{\rxExX}{cos(\rxPhi+\rxExAngle)}
-	\pgfmathsetmacro{\rxExY}{sin(\rxPhi+\rxExAngle)}
-	\pgfmathsetmacro{\txExX}{cos(\txPhi+\txExAngle)}
-	\pgfmathsetmacro{\txExY}{sin(\txPhi+\txExAngle)}
-	\pgfmathsetmacro{\sensorX}{cos(\rxExAngle)}
-	\pgfmathsetmacro{\sensorY}{sin(\rxExAngle)}
-	\pgfmathsetmacro{\emitterX}{cos(\txExAngle)+\txX}
-	\pgfmathsetmacro{\emitterY}{sin(\txExAngle)+\txY}
+\begin{tikzpicture}[scale=1,auto,semithick,>=to,decoration={markings,mark=at position 0.5 with {\arrow{>}}}]
+	\def\unitlessLegDist{1.5113}
+	\def\legDist{\unitlessLegDist cm}
+	\def\legRad{0.05cm}
+	\def\legShade{black!75}
 
-	\pgfmathsetmacro{\alphaAngle}{atan2(\sensorX-\emitterX ,\sensorY-\emitterY) - \rxExAngle +180}
+	\def\motWidth{0.2cm}
+	\def\motHeight{0.8cm}
+	\def\motDist{1.90cm}
+	\def\motShade{gray!50}
 
-	\pgfmathsetmacro{\betaAngle}{atan2(\emitterX-\sensorX,\emitterY-\sensorY ) - \txExAngle - \txPhi + 180}
-	\def\phiArcRadius{0.2cm}
-	\def\thetaArcRadius{0.3cm}
+	\def\dropletOrient{90}
+	\def\pivotTheta{20}
+	\pgfmathsetmacro{\helpfulTheta}{asin(cos(\pivotTheta/2))}
+	\pgfmathsetmacro{\chordLength}{2*\unitlessLegDist*sin(\pivotTheta/2)}
+	\pgfmathsetmacro{\answerTheta}{180-\helpfulTheta - 30}
+	\pgfmathsetmacro{\resultXunitless}{\chordLength*cos(\answerTheta)}
+	\pgfmathsetmacro{\resultYunitless}{\chordLength*sin(\answerTheta)}
+	\def\shiftX{\resultXunitless cm}
+	\def\shiftY{\resultYunitless cm}
 
-	%RX Droplet 
-	\draw[thick] (0cm,0cm) circle(1cm);
-	\draw[gray] (0cm,0cm) - - (\rxPhi:1cm);
-	\draw (-60+\rxPhi:0.25cm) node[inner sep=0mm,circle,fill=white] {WORDS};
-	\foreach \i in {1,...,6} {
-		\draw[gray,->] (\i*-60+30+\rxPhi:0.8cm) -- (\i*-60+30+\rxPhi:1cm);
-		\draw (\i*-60+30+\rxPhi:0.75cm) node[inner sep=0mm,circle,fill=white] {$\hat{\mathbf{\i}}$};
-	}
-	%phiTX arc 
-	\draw[gray,dashed] (0cm,0cm) -- (\txPhi:1cm);
-	\draw[thin,->] (\rxPhi:\phiArcRadius) arc (\rxPhi:\txPhi:\phiArcRadius);
-	\node[inner sep=0mm, fill=white] at (-\ourTheta*0.5+\txPhi*0.5 + \ourTheta-5:\phiArcRadius+0.15cm) {$\phi$};
+	\pgftransformrotate{\dropletOrient}
+		\draw[thick] (0cm,0cm) circle(2.2cm);
+		\draw[gray!20] (0cm, 0cm) -- (2.2cm,0cm);
+		\foreach \i in {0,...,2} {
+			\node[rectangle,draw=black,fill=\motShade,minimum width=\motWidth, minimum height=\motHeight, 
+						rotate around={(-\i*120+\dropletOrient):(0,0)},label={[label distance=-0.05cm]-160:$m_\i$}] at (-120*\i:\motDist) {};
+			\node[circle, draw=none, fill=\legShade, inner sep=\legRad,rotate around={-\i*120:(0,0)},label={[label distance=-0.15cm]-10:$l_\i$}] at (180-120*\i:\legDist) {};
+		}
+		\draw[thin,<->] (0cm, 0cm) -- (60:\legDist) node[below, midway] {$L$};
 
-	%theta arc
-	\draw[thin,->] (\rxPhi:\thetaArcRadius) arc (\rxPhi:\ourTheta:\thetaArcRadius);
-	\node[inner sep=0mm, fill=white] at (-\rxPhi*0.5+\ourTheta*0.5 + \rxPhi:\thetaArcRadius+0.15cm) {$\theta$};
+		%\node[inner sep=0mm, fill=white] at (-\rxPhi*0.5+\txPhi*0.5 + \rxPhi:0.35cm) {$\theta$};
+
+	\pgftransformrotate{-\dropletOrient}
+	\draw[thin] (0,0) arc (-30:-30+\pivotTheta:\legDist) node[right,midway, inner sep=0mm,label={[label distance=-0.02cm]365:$\theta$}] {};
+	\draw[gray] (150:\legDist) -- (\shiftX, \shiftY);
+%	\node[inner sep=0mm,label=-10:$\theta$] at (\shiftX/2,\shiftY/2) {};
 
 \end{tikzpicture}
 
