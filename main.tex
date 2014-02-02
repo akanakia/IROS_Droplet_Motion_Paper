@@ -50,14 +50,19 @@ State how the platform is intended to be a low cost swarm-robotics platform, so 
 
 Motion principle is essentially the same as why a vibrating phone moves across a tabletop.
 
+\subsection{Related work}
+Other miniature robotic platforms such as e-puck, Jasmine and Alice \cite{}. They require geared motors, which are expensive and difficult to miniaturize. Other stick-slip robots, the nanobots from MIT, the kilobots \cite{}. They are cheap, easy to manufacture, but not fully holonomic. In this work, we present a 3-leg stick-slip locomotion system that is fully holonomic. 
+
 \section{Droplet Hardware}
 ***FLESH THIS OUT***
 Part numbers for the motors and motor drivers at least? XMega chip information, a little bit about IR communication. Talk about how the motors are incosistent about which way they spin.
 
+I THINK A 3D MODEL OF THE DROPLETS THAT SHOWS HOW THE MOTORS ARE MOUNTED WOULD REALLY HELP.
+
 \section{Model/Theory Stuff}
 
 \subsection{Base Motion Principle}
-A vibration motor is simply a motor with a mass on the shaft, such that the center of mass is not the on the axis of rotation. Spinning the motor ``throws the mass around'', causing motion of the motor. To understand why this works, note that as the mass swings through its circular path, the motor experiences a force towards that mass. Over the course of a full rotation, the net force experience by the motor is 0. See Figure~\ref{motorDiagram} helps to illustrate why this works.
+A vibration motor is simply a motor with a mass on the shaft, such that the center of mass is not on the axis of rotation. Spinning the motor ``throws the mass around'', causing motion of the motor. To understand why this works, note that as the mass swings through its circular path, the motor experiences a force towards that mass. Over the course of a full rotation, the net force experienced by the motor is 0. See Figure~\ref{motorDiagram} helps to illustrate why this works.
 
 \begin{figure}
 \centering
@@ -66,7 +71,7 @@ A vibration motor is simply a motor with a mass on the shaft, such that the cent
 \label{motorDiagram}
 \end{figure}
 
-To achieve 1DoF motion using this principle, we must mount the motor on some sort of platform. If we neglect friction, the platform will slide backwards and forwards due to the backwards and forwards forces frome mass, but experience no net translation. With friction, the vertical forces of the mass become relevant. The downward force of gravity is mitigated by the upward force from the swinging mass. Crucially, this means that the total downward force experienced by the platform is lower while the mass is swinging upwards. Thus, the platform experiences reduced friction while the mass is swinging upwards. The direction of lateral magnitude during this period of reduced friction (or, the direction the motor is spinning) determines the direction of travel. \cite{Vartholomeos2005,Vartholomeos2006} go in to more mathematical detail of this model.
+To achieve 1DoF motion using this principle, we must mount the motor on some sort of platform. If we neglect friction, the platform will slide backwards and forwards due to the backwards and forwards forces from the mass, but experiences no net translation. With friction, the vertical forces of the mass become relevant. The downward force of gravity is mitigated by the upward force from the swinging mass. Crucially, this means that the total downward force experienced by the platform is lower while the mass is swinging upwards. Thus, the platform experiences reduced friction while the mass is swinging upwards. The direction of lateral magnitude during this period of reduced friction (or, the direction the motor is spinning) determines the direction of travel. \cite{Vartholomeos2005,Vartholomeos2006} go in to more mathematical detail of this model.
 
 \subsection{Motion Principle Applied to Droplets}
 
@@ -89,11 +94,11 @@ By restricting ourselves to these small-pivot ``steps'', we avoid the requiremen
 
 To simplify, we focus on the platform moving in one of six directions: (0,180, $+/-$60, $+/-$120) degrees, as well as clockwise and counterclockwise rotation. It should be a straightforward extension to get arbitrary 3DoF motion by combining these directions.
 
- There are still some difficulties to overcome with physical implementation. In particular, requiring that each step be of consistent size causes trouble. Variations in the manufacture of our motors and platform mean that the robot must be calibrated to ensure consistent step size.
+ There are still some difficulties to overcome with physical implementation. In particular, requiring that each step be of consistent size causes trouble. Variations in the manufacturing of our motors and platform mean that the robot must be calibrated to ensure consistent step size.
 
-\section{Autocalibration}
+\section{Auto-calibration}
 
-It is possible to clalibrate each platform manually, by setting values and eyeballing how well they work. As stated earlier, however, this platform is motivated by a desire for low-cost, large scale robot swarms.  Manual calibration of a swarm of thousands of robots would be completely impractical, and so we automate the process.
+It is possible to calibrate each platform manually, by setting values and eyeballing how well they work. As stated earlier, however, this platform is motivated by a desire for low-cost, large scale robot swarms.  Manual calibration of a swarm of thousands of robots would be completely impractical, and so we automate the process.
 
 We communicate with and control the platform through serial to IR (using the same platform without legs or motors as a glorified serial-to-IR converter). 
 
@@ -108,7 +113,11 @@ Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam 
 
 To update the Droplet's calibration settings, we find the least-squares best-fit circle of the collected coordinates. Specifically, the circle's radius and whether it is on the Droplet's left or right. While calibrating for walking straight, we optimize for maximizing the radius of the fitted circle (if the Droplet travelled perfectly straight, the radius would by infinite). While calibrating for spinning, we optimize for minimizing the radius of the fitted circle (a perfect spin would have radius 0).
 
-\section{Future Work}
+\section{Results}
+What are the experiments that we have done to show that this works? All plots here.
+
+
+\section{Discussion}
 Ditch the whole computer vision set up and use the Droplet's IR communication and range and bearing powers to get data and have the swarm calibrate itself.
 
 Get arbitrary 3DoF motion by combining directions.
