@@ -6,7 +6,7 @@
 \IEEEoverridecommandlockouts
 \overrideIEEEmargins 
 \usepackage{tikz}
-\usetikzlibrary{calc,decorations.markings}
+\usetikzlibrary{calc,decorations.markings,arrows}
 \usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
 \usepackage{amsmath}
 \usepackage{xifthen}
@@ -85,16 +85,46 @@ Now we will take that 1DoF model and apply it to our 3DoF robotics platform. See
 
 \begin{figure}
 \centering
-%\includegraphics[width=\linewidth]{images/dropletMotorDiagram.png}
-\caption{PLACEHOLDER. Droplets motion principle, now looking from above.}
+\subfile{dropletDiagram.tex}
+\caption{Droplets motion principle, now looking from above.}
 \label{dropletMotorDiagram}
 \end{figure}
 
-***SHOULD ACTUALLY DO THIS MATH AND HAVE EQUATIONS.***
+As the mass on the motor swings upwards, the friction experienced by each leg is reduced. Moreover, it is reduced more for the two legs nearest the motor. The lateral force by the motor -- which is tangent to the platform's circular frame -- thus causes the platform to pivot about the leg opposite it.
 
-As the mass on the motor swings upwards, the friction experienced by each leg is reduced. Moreover, it is reduced more for the two legs nearest the motor. The lateral force by the motor -- which is tangent to the circle of the platform's three legs -- thus causes the platform to pivot about the leg opposite it. By spinning the motor in the other direction, the platform pivots in the other direction.
+\subsubsection{Walking Straight}
 
-***TALK ABOUT HOW WE GO FROM PIVOTS TO 3DOF MOTION***
+Let us consider a single pivot caused by motor 1 ($m_1$), about leg 1 ($l_1$), of some small, positive radial distance $\theta$. This motion causes the center of the Droplet to trace $\theta$ of an arc about $l_1$. The length of the chord with the same endpoints as the arc, $C$, ie. the distance traveled by the center of the Droplet, is given by:
+\[
+C=2 L \sin\left(\frac{\theta}{2}\right)
+\]
+Where $L$ is the distance between the robot's center and leg; the radius of the arc. To break this $c$ displacement in to its $x$ and $y$ components, we first need to know the angles of the triangle made by the chord and the leg. We can get this using the law of sines:
+\[
+x = \arcsin\left(\frac{L}{C}\sin(\theta)\right) 
+\]
+Inserting our equation for $C$ gives:
+\begin{align*}
+x &=\arcsin\left(\frac{L\sin(\theta)}{2 L \sin(\frac{\theta}{2})}\right) \\
+   &=\arcsin\left(\cos\left(\frac{\theta}{2}\right)\right)
+\end{align*}
+
+Given this angle $x$, and the known angle between the Droplet's $x$\~axis and the leg ($\phi_1$), we can calculate the direction of the platform's displacement:
+
+\begin{align*}
+\delta x_a &= C \cos(\pi - x - \phi)\\
+\delta y_a &= C \sin(\pi - x - \phi)
+\end{align*}
+
+Note also that the orientation of the Droplet has changed by $\theta$. Next, consider a second pivot by $m_2$ of $-\theta$. By symmetry, we now have:
+
+\begin{align*}
+\delta x_b &= -C\cos(\pi -x -\phi)\\
+\delta y_b &= C \sin(\pi - x - \phi)
+\end{align*}
+
+and the orientation has now changed by $-\theta$, putting the Droplet back in its original orientation. 
+***ROUGH***
+Having trouble with the formalism here, but the basic idea is that, the Droplet IS NOT going straight - it's going at an angle, because the orientation it takes the second step at is different than the orientation of the first step. The size of this error is a function of $\theta$. As $\theta$ approaches $0$, so does the error. Similarly, when spinning each cycle of three motors doesn't leave us back at our exact original position, but it does bring us pretty close.
 
 By restricting ourselves to these small-pivot ``steps'', we avoid the requirements of precise balance and motor-phase syncronization that causes trouble with more direct implementations \cite{Vartholomeos2006}.
 
@@ -115,7 +145,7 @@ Calibration is done as a looped series of steps in which we:
 \item Tell the Droplet to stop walking.
 \item Use the collected data to update its calibration settings.
 \end{enumerate}
-Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam CINEMA ***DOUBLE CHECK THIS***}, and RoboRealm \cite{RoboRealm}. A fiducial marking is taped to the top of the platform to aid in tracking and orientation calculations. Specifically, we collect the position (x,y coordinate) and orientation of the Droplet in each frame.
+Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam Cinema}, and RoboRealm \cite{RoboRealm}. A fiducial marking is taped to the top of the platform to aid in tracking and orientation calculations. Specifically, we collect the position (x,y coordinate) and orientation of the Droplet in each frame.
 
 To update the Droplet's calibration settings, we find the least-squares best-fit circle of the collected coordinates. Specifically, the circle's radius and whether it is on the Droplet's left or right. While calibrating for walking straight, we optimize for maximizing the radius of the fitted circle (if the Droplet travelled perfectly straight, the radius would by infinite). While calibrating for spinning, we optimize for minimizing the radius of the fitted circle (a perfect spin would have radius 0).
 
