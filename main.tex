@@ -50,14 +50,25 @@ State how the platform is intended to be a low cost swarm-robotics platform, so 
 
 Motion principle is essentially the same as why a vibrating phone moves across a tabletop.
 
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.8\columnwidth]{./Images/droplets.png}
+	\caption{The Droplet swarm robotics platform. Two Droplets are shown, one with the cover removed. A penny is included for scale. The background is the floor of alternating power and ground strips from which the Droplets draw power.}
+	\label{droplets}
+\end{figure}
+
 \subsection{Related work}
 Other miniature robotic platforms such as e-puck, Jasmine and Alice \cite{}. They require geared motors, which are expensive and difficult to miniaturize. Other stick-slip robots, the nanobots from MIT, the kilobots \cite{}. They are cheap, easy to manufacture, but not fully holonomic. In this work, we present a 3-leg stick-slip locomotion system that is fully holonomic. 
 
-\section{Droplet Hardware}
-***FLESH THIS OUT***
-Part numbers for the motors and motor drivers at least? XMega chip information, a little bit about IR communication. Talk about how the motors are incosistent about which way they spin.
+\section{The Droplet Swarm Robotic Platform}
+The Droplets are an open-source swarm robotic platform, with source code and manufacturing information available online. Their body has a radius of $2.2cm$. They have three extended headers for legs located symmetrically around the robot $1.5cm$ from the center. The Droplets receive power from these legs through a floor with alternating strips of $+5V$ and $GND$. The Droplets use an Atmel Xmega128A3U microcontroller, along with Allegro A3901 Dual Motor Drivers. The motors are a low cost, coin-type model and are mounted symmetrically around the robot opposite the legs, near the outer edge. The motors are oriented such that the axis of rotation moves through the center of the robot and the opposite leg. Due probably to their low cost, our motors are inconsistent about the direction in which they spin, something that must be addressed by our auto-calibration process.
 
-I THINK A 3D MODEL OF THE DROPLETS THAT SHOWS HOW THE MOTORS ARE MOUNTED WOULD REALLY HELP.
+\begin{figure}[h]
+	\centering
+	\subfile{motorLocations}
+	\caption{An image of the Droplet's shell, with just the motors included. The locations where the legs are mounted are labeled.}
+	\label{motorLocations}
+\end{figure}
 
 \section{Model/Theory Stuff}
 
@@ -66,8 +77,8 @@ A vibration motor is simply a motor with a mass on the shaft, such that the cent
 
 \begin{figure}
 \centering
-%\includegraphics[width=\linewidth]{images/motorDiagram.png}
-\caption{PLACEHOLDER. Simple 1DoF model of motion principle, from the side.}
+\subfile{singleDoFModel}
+\caption{Simple 1DoF model of motion principle, from the side.}
 \label{motorDiagram}
 \end{figure}
 
@@ -79,7 +90,7 @@ Now we will take that 1DoF model and apply it to our 3DoF robotics platform. See
 
 \begin{figure}
 \centering
-\subfile{dropletDiagram.tex}
+\subfile{dropletDiagram}
 \caption{Droplets motion principle, now looking from above.}
 \label{dropletMotorDiagram}
 \end{figure}
@@ -117,6 +128,7 @@ Note also that the orientation of the Droplet has changed by $\theta$. Next, con
 \end{align*}
 
 and the orientation has now changed by $-\theta$, putting the Droplet back in its original orientation. 
+
 ***ROUGH***
 Having trouble with the formalism here, but the basic idea is that, the Droplet IS NOT going straight - it's going at an angle, because the orientation it takes the second step at is different than the orientation of the first step. The size of this error is a function of $\theta$. As $\theta$ approaches $0$, so does the error. Similarly, when spinning each cycle of three motors doesn't leave us back at our exact original position, but it does bring us pretty close.
 
@@ -153,6 +165,8 @@ Ditch the whole computer vision set up and use the Droplet's IR communication an
 Get arbitrary 3DoF motion by combining directions.
 
 \section{Conclusion}
+To make an analogy to animal strides, the Droplets are only capable of strides in which one leg is ``in the air'' at a time. Any more than that and the Droplet becomes unstable.
+
 Conclusory stuff here.
 
 \section*{Acknowledgments}
