@@ -151,13 +151,25 @@ It is possible to calibrate each platform manually, by setting values and eyebal
 
 We communicate with and control the platform through serial to IR (using the same platform without legs or motors as a glorified serial-to-IR converter). 
 
-Calibration is done as a looped series of steps in which we:
-\begin{enumerate}
-\item Tell the Droplet to walk in some direction.
-\item Measure the Droplet's position and orientation until enough data has been collected.
-\item Tell the Droplet to stop walking.
-\item Use the collected data to update its calibration settings.
-\end{enumerate}
+***TODO: Still need to put in algorithm environment.***
+Calibration:
+\begin{itemize}
+\item Use the popular Nelder-Mead algorithm \cite{NelderMead} to calibrate the parameters for clockwise spin.
+\begin{itemize}
+\item TALK ABOUT HOW NELDER MEAD WORKS?
+\item The objective of the algorithm is to minimize the radius of the circle fitted to the points on the Droplet's path as it spins.
+\item There are many sets of parameters that will all give a small radius - as long as all pivots are of the same magnitude. This just gives one of them.
+\item Usefully, this also identifies which motors are `flipped' - ie, which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius.
+\begin{itemize}
+\item It's possible that Nelder-Mead will find a CCW spin, with all motors flipped. After the algorithm comes to a stop, the mean change in orientation is checked to verify that the spin direction is correct. If not, then we've ``accidentally'' optimized for CCW spin, and make note of this in the code. The rest of the procedure only requires that one direction of spin be optimized; it does not care which.
+\end{itemize}
+\end{itemize}
+\item Once we have clockwise spin calibrated, this is equivalent to having three matched pivot sizes for the motors' clockwise spins. To finish calibrating, we just need to find counterclockwise values that match the clockwise ones.
+\item This is done for each motor independently by having the Droplet walk straight in a direction. Now, we want to maximize the radius of the the circle traced by the Droplet. If the Droplet were to walk perfectly straight, the radius would be $\infty$. Calibration values are changed proportionally to how small the radius is, until we've reached the limits imposed by the resolution of our calibration value.
+\end{itemize}
+Simply calibrating for CW and then CCW spin doesn't work because it gives two sets of pivot magnitudes, one for CW and one for CCW rotation. Each set is matched with the other pivots in its set, but without additional information we have no information about the comparative magnitudes across the sets.
+
+***COULD USE CCW SPIN TO VERIFY METHOD.***
 Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam Cinema}, and RoboRealm \cite{RoboRealm}. A fiducial marking is taped to the top of the platform to aid in tracking and orientation calculations. Specifically, we collect the position (x,y coordinate) and orientation of the Droplet in each frame.
 
 To update the Droplet's calibration settings, we find the least-squares best-fit circle of the collected coordinates. Specifically, the circle's radius and whether it is on the Droplet's left or right. While calibrating for walking straight, we optimize for maximizing the radius of the fitted circle (if the Droplet travelled perfectly straight, the radius would by infinite). While calibrating for spinning, we optimize for minimizing the radius of the fitted circle (a perfect spin would have radius 0).
