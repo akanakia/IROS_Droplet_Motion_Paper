@@ -19,6 +19,17 @@
 \usepackage{xspace}
 \usepackage{subfiles}
 
+
+
+% Nice Little macro for adding a comment box. Include incrementing comment numbers.
+\newcounter{comcount}
+\setcounter{comcount}{0}
+\newcommand{\mycomment}[1]
+{
+\refstepcounter{comcount}
+\smallskip\noindent\fbox{\parbox{\linewidth}{\emph{Comment \arabic{comcount}} : \small{#1}}} 
+}
+
 %
 %Once I break this in to multiple sections, each section will be added with:
 %	\subfile{filename}
@@ -195,36 +206,43 @@ Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam 
 
 To update the Droplet's calibration settings, we find the least-squares best-fit circle of the collected coordinates. Specifically, the circle's radius and whether it is on the Droplet's left or right. While calibrating for walking straight, we optimize for maximizing the radius of the fitted circle (if the Droplet travelled perfectly straight, the radius would by infinite). While calibrating for spinning, we optimize for minimizing the radius of the fitted circle (a perfect spin would have radius 0).
 
-We communicate with and control the platform through serial to IR (using the same platform without legs or motors as a glorified serial-to-IR converter). 
+We communicate with and control the platform through a serial to IR transmitter. 
 
 ***IMAGE OF EXPERIMENT SETUP WOULD BE NICE***
 
 
 \subsection{Calibration Method}
-***TODO: Still need to put in algorithm environment.***
-\begin{itemize}
-\item Use the popular Nelder-Mead algorithm \cite{NelderMead} to calibrate the parameters for clockwise spin.
-\begin{itemize}
-\item TALK ABOUT HOW NELDER MEAD WORKS?
-\item The objective of the algorithm is to minimize the radius of the circle fitted to the points on the Droplet's path as it spins.
-\item There are many sets of parameters that will all give a small radius - as long as all pivots are of the same magnitude. This just gives one of them.
-\item Usefully, this also identifies which motors are `flipped' - ie, which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius.
-\begin{itemize}
-\item It's possible that Nelder-Mead will find a CCW spin, with all motors flipped. After the algorithm comes to a stop, the mean change in orientation is checked to verify that the spin direction is correct. If not, then we've ``accidentally'' optimized for CCW spin, and make note of this in the code. The rest of the procedure only requires that one direction of spin be optimized; it does not care which.
-\end{itemize}
-\end{itemize}
-\item Once we have clockwise spin calibrated, this is equivalent to having three matched pivot sizes for the motors' clockwise spins. To finish calibrating, we just need to find counterclockwise values that match the clockwise ones.
-\item This is done for each motor independently by having the Droplet walk straight in a direction. Now, we want to maximize the radius of the the circle traced by the Droplet. If the Droplet were to walk perfectly straight, the radius would be $\infty$. Calibration values are changed proportionally to how small the radius is, until we've reached the limits imposed by the resolution of our calibration value.
-\end{itemize}
+Provide method overview.
+
+Use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise). Each vertex in the simplex is a set of three motor calibration parameters. The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function is therefore,
+\begin{equation}
+\text{(min.)} \quad -r_{circ}(\mu_1, \mu_2, \mu_3) + \alpha.v_{rot}(\mu_1, \mu_2, \mu_3)
+\end{equation}
+where $\alpha$ is a weighting constant set to a value less than 1 as we prefer motor values that minimizing circle radius over rotational speed.
+
+The objective function given to Nelder-Mead simplex is, minimize the radius of the circle fitted to the points on the Droplet's path as it spins.
+
+There are many sets of parameters that will all give a small radius - as long as all pivots are of the same magnitude. This just gives one of them.
+
+Additionally, this method identifies which motors are `flipped'---i.e., which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius.
+
+It's possible that Nelder-Mead will find a CCW spin, with all motors flipped. After the algorithm comes to a stop, the mean change in orientation is checked to verify that the spin direction is correct. The rest of the procedure only requires that one direction of spin be optimized; it does not care which.
+
+Once we have clockwise spin calibrated, this is equivalent to having three matched pivot sizes for the motors' clockwise spins. To finish calibrating, we just need to find counterclockwise values that match the clockwise ones.
+
+This is done for each motor independently by having the Droplet walk straight in a direction. Now, we want to maximize the radius of the the circle traced by the Droplet. As the droplet improves straight-line motion accuracy, the radius of the circle transcribed by its motion approaches $\infty$. Changes in calibration values are made proportional to circle radius until we've reached the limits imposed by the resolution of our calibration value.
+
 Simply calibrating for CW and then CCW spin doesn't work because it gives two sets of pivot magnitudes, one for CW and one for CCW rotation. Each set is matched with the other pivots in its set, but without additional information we have no information about the comparative magnitudes across the sets.
 
-***COULD USE CCW SPIN TO VERIFY METHOD.***
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
+
 What are the experiments that we have done to show that this works? All plots here.
+
+Use CCW spin to verify results.
 
 
 
