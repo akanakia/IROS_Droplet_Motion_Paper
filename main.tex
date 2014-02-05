@@ -138,6 +138,16 @@ To simplify, we focus on the platform moving in one of six directions: (0,180, $
 
  There are still some difficulties to overcome with physical implementation. In particular, requiring that each step be of consistent size causes trouble. Variations in the manufacturing of our motors and platform mean that the robot must be calibrated to ensure consistent step size.
 
+\subsection{Forward and inverse kinematics}
+With the control parameters $\dot{theta}_1$, $\dot{theta}_2$ and $\dot{theta}_3$ that are due to vibration of motors $m_1$, $m_2$, and $m_3$, respectively, we can derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$:
+(X-AXIS GOES OUT TO THE RIGHT, Y-AXIS GOES UP, THETA IS POSITIVE IN COUNTER CLOCKWISE NEED TO ADD TO DRAWING)
+\begin{eqnarray}
+\dot{x}_r &=&\\
+\dot{y}_r &=& \theta_1 - \theta_2\\
+\dot{\theta}_r &=& \theta_0 + \theta_1 + \theta_2
+\end{eqnarray}
+Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way.  
+
 \section{Experimental platform}
 We constructed the ``Droplets'' platform, a ping-pong ball sized, spherical robot with a flat bottom, three legs, three coin-type vibration motors arranged as shown in Figure \ref{dropletMotorDiagram}, and a 6-directional infrared range and bearing system \cite{farrow14}. The legs are spaced 120 degrees apart 15.1mm (0.595in) from the center.
 
