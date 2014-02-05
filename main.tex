@@ -19,7 +19,10 @@
 \usepackage{xspace}
 \usepackage{subfiles}
 
-
+% Packages for including pseudo-code
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 % Nice Little macro for adding a comment box. Include incrementing comment numbers.
 \newcounter{comcount}
@@ -41,7 +44,7 @@
 A Stick-Slip Omnidirectional Drive-train for Low-Cost Swarm Robotics
 }
 
-\author{John Klingner and ??? and Nicholas Farrow, Dustin Reishus and Nikolaus Correll%
+\author{John Klingner and Nikolaus Correll and Anshul Kanakia and Nicholas Farrow% and Dustin Reishus%
 \thanks{Department of Computer Science,
 University of Colorado at Boulder,
  Boulder, CO 80309,
@@ -210,21 +213,24 @@ To update the Droplet's calibration settings, we find the least-squares best-fit
 
 We communicate with and control the platform through a serial to IR transmitter. 
 
-***IMAGE OF EXPERIMENT SETUP WOULD BE NICE***
+\mycomment{Image of experiment setup here would be nice.}
 
 
 \subsection{Calibration Method}
-Provide method overview.
+\begin{algorithm}
+\caption{Automated method for calibrating an individual Droplet's rotational and linear motion}
+\begin{algorithmic}
+	\Function{Auto\_Calibrate}{}
+	\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
-Use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise). Each vertex in the simplex is a set of three motor calibration parameters. The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function is therefore,
+we use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise). Each vertex in the simplex is a set of three motor calibration parameters. The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function is therefore,
 \begin{equation}
-\text{(min.)} \quad -r_{circ}(\mu_1, \mu_2, \mu_3) + \alpha.v_{rot}(\mu_1, \mu_2, \mu_3)
+\text{(max.)} \quad -\alpha.r_{circ}(\mu_1, \mu_2, \mu_3) + \beta.v_{rot}(\mu_1, \mu_2, \mu_3)\label{eq:maxcal}
 \end{equation}
-where $\alpha$ is a weighting constant set to a value less than 1 as we prefer motor values that minimizing circle radius over rotational speed.
-
-The objective function given to Nelder-Mead simplex is, minimize the radius of the circle fitted to the points on the Droplet's path as it spins.
-
-There are many sets of parameters that will all give a small radius - as long as all pivots are of the same magnitude. This just gives one of them.
+where $\alpha$ and $\beta$ are weighting constants such that $\alpha > \beta$, as we prefer motor values($\mu_1$, $\mu_2$ and $\mu_3$) that minimize circle radius over rotational speed. The solution to \eqref{eq:maxcal} is not unique, i.e., there are multiple valid sets of motor values, $\mu_i$, that minimize circle radius. As long as all pivots are of the same magnitude, this just gives one of them.
+\mycomment{Not sure what that last sentence means.}
 
 Additionally, this method identifies which motors are `flipped'---i.e., which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius.
 
