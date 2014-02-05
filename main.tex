@@ -161,7 +161,9 @@ With the control parameters $\dot{theta}_1$, $\dot{theta}_2$ and $\dot{theta}_3$
 Here we assume the y-axis to be orthogonal to the spinning direction of motor 2, and the y-axis to to split the angle between the axis connecting motor 1 and leg 1, and the axis connecting motor 0 and leg 0.
 \begin{eqnarray}\label{eq:fwd}
 \dot{x}_r &=& L\dot{\theta_2}-L\dot{\theta_1}\frac{\sqrt{3}}{2}+L\dot{\theta_0}\frac{\sqrt{3}}{2}\\
+\nonumber
 \dot{y}_r &=& L\dot{\theta_0}\frac{\sqrt{3}}{2} - L\dot{\theta_1}\frac{\sqrt{3}}{2}\\
+\nonumber
 \dot{\theta}_r &=& \dot{\theta_0} + \dot{\theta_1} + \dot{\theta_2}
 \end{eqnarray}
 Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $l$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. The fraction $\frac{\sqrt{3}}{2}$ is equivalent from $\cos 30^o$. Notice that motor 2 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
