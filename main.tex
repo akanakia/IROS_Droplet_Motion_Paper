@@ -218,14 +218,16 @@ Additional challenges arising from low-cost hardware is that achieving equal ste
 It is possible to calibrate each platform manually, by setting values and eyeballing how well they work. As stated earlier, however, this platform is motivated by a desire for low-cost, large scale robot swarms.  Manual calibration of a swarm of thousands of robots would be completely impractical, and so we automate the process.
 
 \subsection{Experimental Setup}
-Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam Cinema}, and RoboRealm \cite{RoboRealm}. A fiducial marking is taped to the top of the platform to aid in tracking and orientation calculations. Specifically, we collect the position (x,y coordinate) and orientation of the Droplet in each frame.
+Data is collected using a high resolution USB camera\footnote{Microsoft LifeCam Cinema}, and RoboRealm \cite{RoboRealm}. A fiducial marking is taped to the top of the platform to aid in tracking and orientation calculations (Figure \ref{fig:expsetup}). Specifically, we collect the position (x,y coordinate) and orientation of the Droplet in each frame.
 
 To update the Droplet's calibration settings, we find the least-squares best-fit circle of the collected coordinates. Specifically, the circle's radius and whether it is on the Droplet's left or right. While calibrating for walking straight, we optimize for maximizing the radius of the fitted circle (if the Droplet travelled perfectly straight, the radius would by infinite). While calibrating for spinning, we optimize for minimizing the radius of the fitted circle (a perfect spin would have radius 0).
 
 We communicate with and control the platform through a serial to IR transmitter. 
 
-\mycomment{Image of experiment setup here would be nice.}
-
+\begin{figure}
+\includegraphics[width=\linewidth]{images/cameraView}
+\caption{View from the overhead camera onto the Droplet equipped with a fiducial marker that can be recognized by RoboRealm.\label{fig:expsetup}} 
+\end{figure}
 
 \subsection{Calibration Method}
 \begin{algorithm}
@@ -317,7 +319,7 @@ To make an analogy to animal strides, the Droplets are only capable of strides i
 
 Conclusory stuff here.
 
-\section*{Acknowledgments}
+\section*{Acknowledgments} We thank Dr.\ Timothy Caldwell for helpful discussion on suitable optimization methods. 
 This work has been supported by NSF award \#1150223 and a CI fellowship to D. Reishus.
 
 
