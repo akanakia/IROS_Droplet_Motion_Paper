@@ -34,6 +34,8 @@
 \smallskip\noindent\fbox{\parbox{\linewidth}{\emph{Comment \arabic{comcount}} : \small{#1}}} 
 }
 
+\newcommand{\spx}{\mathcal{S}}
+
 %
 %Once I break this in to multiple sections, each section will be added with:
 %	\subfile{filename}
@@ -96,12 +98,12 @@ The Droplets are an open-source swarm robotic platform, with source code and man
 \subsection{Base Motion Principle}
 A vibration motor is a DC motor with a mass on the shaft, such that the center of mass is not on the axis of rotation. Spinning the motor throws the mass around, causing motion of the entire motor body due to inertia. As the mass swings through its circular path, the motor experiences a force towards that mass. Over the course of a full rotation, the net force experienced by the motor is 0. 
 
-\begin{figure}
+\begin{figure*}
 \centering
 \subfile{singleDoFModel}
 \caption{Simple 1DoF model of motion principle, from the side.}
 \label{motorDiagram}
-\end{figure}
+\end{figure*}
 
 To achieve 1DoF motion using this principle, we must mount the motor on some sort of platform. If we neglect friction, the platform will slide backwards and forwards due to the backwards and forwards forces from the mass, but experiences no net translation. With friction, the vertical forces of the mass become relevant. The downward force of gravity is mitigated by the upward force from the swinging mass. Crucially, this means that the total downward force experienced by the platform is lower while the mass is swinging upwards. Thus, the platform experiences reduced friction while the mass is swinging upwards. The direction of lateral magnitude during this period of reduced friction (or, the direction the motor is spinning) determines the direction of travel, see also \cite{Vartholomeos2005,Vartholomeos2006} for more mathematical detail of this model. Figure~\ref{motorDiagram} illustrates this process. Note that the robot does not actually need to jump up, as long as the upward force sufficiently reduces static friction. 
 
@@ -219,18 +221,41 @@ We communicate with and control the platform through a serial to IR transmitter.
 
 \subsection{Calibration Method}
 \begin{algorithm}
-\caption{Automated method for calibrating an individual Droplet's rotational and linear motion}
+\caption{Automated method for calibrating an individual Droplet's rotational motion}
 \begin{algorithmic}
-	\Function{Auto\_Calibrate}{}
+	\Function{Auto\_Calibrate}{$dir, \alpha, \beta$}		
+		\State $\spx \gets$ init\_simplex\_guess()
+		\State $[\mu^*_1,\mu^*_2, \mu^*_3] \gets$ Nelder\_Mead($\spx, dir, \alpha, \beta$) 
+		\State write\_to\_memory($id_{robot}, dir, \mu^*_1,\mu^*_2, \mu^*_3$)
 	\EndFunction
-\end{algorithmic}
+	\Function{Nelder\_Mead}{$\spx, dir, \alpha, \beta$}
+		\State $radii \gets$ new list()
+		\State $v \gets$ new list()
+		\For{$\vec{\mu}$ in $\spx$}
+			\State $radii$.push(get\_robot\_spin\_circle\_est($\vec{\mu}, dir$))
+			\State $v$.push(get\_robot\_spin\_vel\_est($\vec{\mu}$))
+		\EndFor
+		\State $\spx' \gets$ new\_simplex\_est($\spx, radii, v, dir, \alpha, \beta$)
+		\If{within\_tolerence($\spx', radii, v$)}
+			\State \Return best\_values($\spx'$)
+		\Else
+			\State Nelder\_Mead($\spx', \alpha, \beta$)
+		\EndIf
+	\EndFunction
+\end{algorithmic}\label{alg:spx}
 \end{algorithm}
 
-we use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise). Each vertex in the simplex is a set of three motor calibration parameters. The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function is therefore,
+We use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise), as seen in Alg.(\ref{alg:spx}). 
+
+The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function used by the algorithm is,
 \begin{equation}
 \text{(max.)} \quad -\alpha.r_{circ}(\mu_1, \mu_2, \mu_3) + \beta.v_{rot}(\mu_1, \mu_2, \mu_3)\label{eq:maxcal}
 \end{equation}
-where $\alpha$ and $\beta$ are weighting constants such that $\alpha > \beta$, as we prefer motor values($\mu_1$, $\mu_2$ and $\mu_3$) that minimize circle radius over rotational speed. The solution to \eqref{eq:maxcal} is not unique, i.e., there are multiple valid sets of motor values, $\mu_i$, that minimize circle radius. As long as all pivots are of the same magnitude, this just gives one of them.
+where $\alpha$ and $\beta$ are weighting constants such that $\alpha > \beta$, as we prefer motor values that minimize circle radius over rotational speed.
+
+Each of the four vertices in the simplex is a set of three motor calibration parameters, i.e., $\spx = \{\vec{\mu^1}, \vec{\mu^2}, \vec{\mu^3}, \vec{\mu^4}\}$, where $\vec{\mu^i} = \{\mu^i_1, \mu^i_2, \mu^i_3\}$. The algorithm attempts to provide iteratively better motor control parameters by solving the optimization problem \eqref{eq:maxcal} till a sufficiently accurate set of parameters is provided that falls within the desired tolerances of rotational circle radius and velocity.
+
+The reader should note that a solution provided by the Nelder\_Mead() algorithm is not unique, i.e., there are multiple valid sets of motor values, $\mu_i$, that minimize circle radius. As long as all pivots are of the same magnitude, this just gives one of them.
 \mycomment{Not sure what that last sentence means.}
 
 Additionally, this method identifies which motors are `flipped'---i.e., which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius.
@@ -253,6 +278,12 @@ What are the experiments that we have done to show that this works? All plots he
 
 Use CCW spin to verify results.
 
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{dropletWalksSquare}
+\caption{Two attempts (solid, dashed) of a calibrated Droplet walking in a square, combing straight motion with a rotation.}
+\label{fig:someting}
+\end{figure}
 
 
 
