@@ -126,15 +126,15 @@ As the mass on the motor swings upwards, the friction experienced by each leg is
 
 \subsubsection{Straight motion}
 
-Let us consider a single pivot caused by motor 1 ($m_1$), about leg 1 ($l_1$), of some small, positive radial distance $\theta$. This motion causes the center of the Droplet to trace $\theta$ of an arc about $l_1$. The length of the chord with the same endpoints as the arc, $C$, ie. the distance traveled by the center of the Droplet, is given by:
-\begin{equation}
-C=2 L \sin\left(\frac{\theta}{2}\right)
+Let us consider a single pivot caused by motor $i$ ($m_i$), about leg $i$ ($l_i$), of some small, positive radial distance $\theta_i$. This motion causes the center of the Droplet to trace $\theta_1$ of an arc about $l_i$. The length of the chord with the same endpoints as the arc, $C$, i.e. the distance traveled by the center of the Droplet, is given by:
+\begin{equation}\label{eq:arclength}
+C=2 L \sin\left(\frac{\theta_1}{2}\right)
 \end{equation}
-Where $L$ is the distance between the robot's center and leg; the radius of the arc. To break this $c$ displacement in to its $x$ and $y$ components, we first need to know the angles of the triangle made by the chord and the leg. We can get this using the law of sines:
+Where $L$ is the distance between the robot's center and leg; the radius of the arc. To break this displacement in to its $x$ and $y$ components, we first need to know the angles of the triangle made by the chord and the leg. We can get this using the law of sines:
 \begin{equation}
 x = \arcsin\left(\frac{L}{C}\sin(\theta)\right) 
 \end{equation}
-Inserting our equation for $C$ gives:
+Inserting the arc length $C$ from \ref{eq:arclength} gives:
 \begin{align}
 x &=\arcsin\left(\frac{L\sin(\theta)}{2 L \sin(\frac{\theta}{2})}\right) \\
 \nonumber
@@ -151,17 +151,18 @@ Given this angle $x$, and the known angle between the Droplet's $x$\~axis and th
 
 Note also that the orientation of the Droplet has changed by $\theta$. Next, consider a second pivot by $m_2$ of $-\theta$. By symmetry, we now have:
 
-\begin{align*}
+\begin{align}
 \delta x_b &= -C\cos(\pi -x -\phi)\\
+\nonumber
 \delta y_b &= C \sin(\pi - x - \phi)
-\end{align*}
+\end{align}
 
 and the orientation has now changed by $-\theta$, putting the Droplet back in its original orientation. 
 
 ***ROUGH***
 Having trouble with the formalism here, but the basic idea is that, the Droplet IS NOT going straight - it's going at an angle, because the orientation it takes the second step at is different than the orientation of the first step. The size of this error is a function of $\theta$. As $\theta$ approaches $0$, so does the error. Similarly, when spinning each cycle of three motors doesn't leave us back at our exact original position, but it does bring us pretty close.
 
-By restricting ourselves to these small-pivot ``steps'', we avoid the requirements of precise balance and motor-phase syncronization that causes trouble with more direct implementations \cite{Vartholomeos2006}.
+By restricting ourselves to these small-pivot ``steps'', we avoid the requirements of precise balance and motor-phase synchronization that causes trouble with more direct implementations \cite{Vartholomeos2006}.
 
 To simplify, we focus on the platform moving in one of six directions: (0,180, $+/-$60, $+/-$120) degrees, as well as clockwise and counterclockwise rotation. It should be a straightforward extension to get arbitrary 3DoF motion by combining these directions.
 
