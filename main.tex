@@ -92,6 +92,8 @@ The Droplets are an open-source swarm robotic platform, with source code and man
 	\label{motorLocations}
 \end{figure}
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Principle of Operation}
 
@@ -125,7 +127,6 @@ As the mass on the motor swings upwards, the friction experienced by each leg is
 
 
 \subsubsection{Straight motion}
-
 Let us consider a single pivot caused by motor $i$ ($m_i$), about leg $i$ ($l_i$), of some small, positive radial distance $\theta_i$. This motion causes the center of the Droplet to trace $\theta_i$ of an arc about $l_i$. The length of the chord with the same endpoints as the arc, $C$, i.e. the distance traveled by the center of the Droplet, is given by:
 \begin{equation}\label{eq:arclength}
 C=2 L \sin\left(\frac{\theta_i}{2}\right)
@@ -170,20 +171,19 @@ Whereas each pivot motion happens at the maximal speed of the platform, we can a
 
 In this reduced model, each motor $m_0$, $m_1$, and $m_2$ controls the angular velocity $\dot{theta}_0$, $\dot{theta}_1$ and $\dot{theta}_2$ around its associated pivot point opposite of the motor. This lets us derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$.
 Here we assume the y-axis to be orthogonal to the spinning direction of motor 2, and the y-axis to to split the angle between the axis connecting motor 1 and leg 1, and the axis connecting motor 0 and leg 0.
-\begin{eqnarray}\label{eq:fwd}
-\dot{x}_r &=& L\dot{\theta_2}-L\dot{\theta_1}\frac{\sqrt{3}}{2}+L\dot{\theta_0}\frac{\sqrt{3}}{2}\\
-\nonumber
-\dot{y}_r &=& L\dot{\theta_0}\frac{\sqrt{3}}{2} - L\dot{\theta_1}\frac{\sqrt{3}}{2}\\
-\nonumber
-\dot{\theta}_r &=& \dot{\theta_0} + \dot{\theta_1} + \dot{\theta_2}
-\end{eqnarray}
-Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $l$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. The fraction $\frac{\sqrt{3}}{2}$ is equivalent from $\cos 30^o$. Notice that motor 2 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
+\begin{align}\label{eq:fwd}
+\dot{x}_r & = -L \dot{\theta}_0 \cos(2 \pi / 3) + L \dot{\theta}_1 \sin(\pi / 6) + L \dot{\theta}_2\\
+\dot{y}_r & =  L \dot{\theta}_0 \sin(2 \pi / 3) - L \dot{\theta}_1 \cos(\pi / 6)\\
+\dot{\theta}_r & = \dot{\theta}_0 + \dot{\theta}_1 + \dot{\theta}_2
+\end{align}
+Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $l$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. Notice that motor 2 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
 
-Equation \ref{eq:fwd} is a linear system with three unknowns, and we can solve
-\begin{eqnarray}
-\dot{\theta_2}=\frac{(\dot{x}-\dot{y})}{L}
-\end{eqnarray}
-and so on.
+Equation \ref{eq:fwd} is a linear system with three unknowns, and we can solve for $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$:
+\begin{align}
+\dot{\theta}_0 & = -\frac{\dot{x}_r}{L} + \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\\
+\dot{\theta}_1 & = -\frac{\dot{x}_r}{L} - \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\\
+\dot{\theta}_2 & = \frac{2 \dot{x}_r}{L} - \dot{\theta}_r
+\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental platform}
