@@ -98,12 +98,12 @@ The Droplets are an open-source swarm robotic platform, with source code and man
 \subsection{Base Motion Principle}
 A vibration motor is a DC motor with a mass on the shaft, such that the center of mass is not on the axis of rotation. Spinning the motor throws the mass around, causing motion of the entire motor body due to inertia. As the mass swings through its circular path, the motor experiences a force towards that mass. Over the course of a full rotation, the net force experienced by the motor is 0. 
 
-\begin{figure}
+\begin{figure*}
 \centering
 \subfile{singleDoFModel}
 \caption{Simple 1DoF model of motion principle, from the side.}
 \label{motorDiagram}
-\end{figure}
+\end{figure*}
 
 To achieve 1DoF motion using this principle, we must mount the motor on some sort of platform. If we neglect friction, the platform will slide backwards and forwards due to the backwards and forwards forces from the mass, but experiences no net translation. With friction, the vertical forces of the mass become relevant. The downward force of gravity is mitigated by the upward force from the swinging mass. Crucially, this means that the total downward force experienced by the platform is lower while the mass is swinging upwards. Thus, the platform experiences reduced friction while the mass is swinging upwards. The direction of lateral magnitude during this period of reduced friction (or, the direction the motor is spinning) determines the direction of travel, see also \cite{Vartholomeos2005,Vartholomeos2006} for more mathematical detail of this model. Figure~\ref{motorDiagram} illustrates this process. Note that the robot does not actually need to jump up, as long as the upward force sufficiently reduces static friction. 
 
