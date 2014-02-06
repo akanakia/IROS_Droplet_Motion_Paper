@@ -33,6 +33,8 @@
 \smallskip\noindent\fbox{\parbox{\linewidth}{\emph{Comment \arabic{comcount}} : \small{#1}}} 
 }
 
+\newcommand{\spx}{\mathcal{S}}
+
 %
 %Once I break this in to multiple sections, each section will be added with:
 %	\subfile{filename}
@@ -218,18 +220,41 @@ We communicate with and control the platform through a serial to IR transmitter.
 
 \subsection{Calibration Method}
 \begin{algorithm}
-\caption{Automated method for calibrating an individual Droplet's rotational and linear motion}
+\caption{Automated method for calibrating an individual Droplet's rotational motion}
 \begin{algorithmic}
-	\Function{Auto\_Calibrate}{}
+	\Function{Auto\_Calibrate}{$dir, \alpha, \beta$}		
+		\State $\spx \gets$ init\_simplex\_guess()
+		\State $[\mu^*_1,\mu^*_2, \mu^*_3] \gets$ Nelder\_Mead($\spx, dir, \alpha, \beta$) 
+		\State write\_to\_memory($id_{robot}, dir, \mu^*_1,\mu^*_2, \mu^*_3$)
 	\EndFunction
-\end{algorithmic}
+	\Function{Nelder\_Mead}{$\spx, dir, \alpha, \beta$}
+		\State $radii \gets$ new list()
+		\State $v \gets$ new list()
+		\For{$\vec{\mu}$ in $\spx$}
+			\State $radii$.push(get\_robot\_spin\_circle\_est($\vec{\mu}, dir$))
+			\State $v$.push(get\_robot\_spin\_vel\_est($\vec{\mu}$))
+		\EndFor
+		\State $\spx' \gets$ new\_simplex\_est($\spx, radii, v, dir, \alpha, \beta$)
+		\If{within\_tolerence($\spx', radii, v$)}
+			\State \Return best\_values($\spx'$)
+		\Else
+			\State Nelder\_Mead($\spx', \alpha, \beta$)
+		\EndIf
+	\EndFunction
+\end{algorithmic}\label{alg:spx}
 \end{algorithm}
 
-we use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise). Each vertex in the simplex is a set of three motor calibration parameters. The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function is therefore,
+We use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise), as seen in Alg.(\ref{alg:spx}). 
+
+The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function used by the algorithm is,
 \begin{equation}
 \text{(max.)} \quad -\alpha.r_{circ}(\mu_1, \mu_2, \mu_3) + \beta.v_{rot}(\mu_1, \mu_2, \mu_3)\label{eq:maxcal}
 \end{equation}
-where $\alpha$ and $\beta$ are weighting constants such that $\alpha > \beta$, as we prefer motor values($\mu_1$, $\mu_2$ and $\mu_3$) that minimize circle radius over rotational speed. The solution to \eqref{eq:maxcal} is not unique, i.e., there are multiple valid sets of motor values, $\mu_i$, that minimize circle radius. As long as all pivots are of the same magnitude, this just gives one of them.
+where $\alpha$ and $\beta$ are weighting constants such that $\alpha > \beta$, as we prefer motor values that minimize circle radius over rotational speed.
+
+Each of the four vertices in the simplex is a set of three motor calibration parameters, i.e., $\spx = \{\vec{\mu^1}, \vec{\mu^2}, \vec{\mu^3}, \vec{\mu^4}\}$, where $\vec{\mu^i} = \{\mu^i_1, \mu^i_2, \mu^i_3\}$. The algorithm attempts to provide iteratively better motor control parameters by solving the optimization problem \eqref{eq:maxcal} till a sufficiently accurate set of parameters is provided that falls within the desired tolerances of rotational circle radius and velocity.
+
+The reader should note that a solution provided by the Nelder\_Mead() algorithm is not unique, i.e., there are multiple valid sets of motor values, $\mu_i$, that minimize circle radius. As long as all pivots are of the same magnitude, this just gives one of them.
 \mycomment{Not sure what that last sentence means.}
 
 Additionally, this method identifies which motors are `flipped'---i.e., which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius.
