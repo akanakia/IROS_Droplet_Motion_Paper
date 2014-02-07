@@ -1,7 +1,7 @@
 \documentclass[main.tex]{subfiles}
 
 \begin{document}
-\begin{tikzpicture}[]
+\begin{tikzpicture}[>=stealth]
 \node at (0,0){
 \begin{tikztimingtable}[scale=1.2,timing/slope=0]
 $m_1$ FW	& X14H;[dashed]1H				\\
@@ -10,19 +10,22 @@ $m_2$ FW	& XH3.5H1.5L2H3.5H1.5L1H;[dashed]1H		\\
 $m_2$ RV	& X14H;[dashed]1H			\\
 \extracode
   \begin{pgfonlayer}{background}
-\begin{scope}[black!30, semithick]
+\begin{scope}[black!30, semithick,dotted]
 \vertlines{5.5,9,12.5}
 \end{scope}
-\begin{scope}[black!5, semithick]
+\begin{scope}[black!30, semithick,dotted]
 \vertlines{2,3.5,5.5,7,9,10.5,12.5}
 \end{scope}
 \end{pgfonlayer}
 \end{tikztimingtable}
 };
-\node at (-1.1,0.8) {\small$t_{on}$};
-\path (-1.1,0.8) -- (-1.1,0.9);
-\node at (-0.475,0.1) {\small$t_{off}$};
-
+\node at (-1.15,0.8) {\small$t_{\text{on}}+\tau_1$};
+\draw[thick,->,>=latex] (-1.15,0.7) -- (-1.15,0.3);
+\node at (0.775,-0.6) {\small$t_{\text{off}}$};
+%\draw[thick,->,>=latex] (-0.475,-0.05) -- (-0.475,-0.4);
+\node at (0.1,0.1) {\small$t_{\text{on}} + \tau_2$};
+\draw[thick,->,>=latex] (0.1,0.0) -- (0.1,-0.4);
+\node at (-0.475,-0.6) {\small$t_{\text{off}}$};
 
 \end{tikzpicture}
 
