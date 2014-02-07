@@ -265,7 +265,10 @@ where $\alpha$ and $\beta$ are weighting constants such that $\alpha > \beta$, a
 
 Each of the four vertices in the simplex is a set of three motor calibration parameters, i.e., $\spx = \{\vec{\mu^1}, \vec{\mu^2}, \vec{\mu^3}, \vec{\mu^4}\}$, where $\vec{\mu^i} = \{\mu^i_1, \mu^i_2, \mu^i_3\}$. The algorithm attempts to provide iteratively better motor control parameters by solving the optimization problem \eqref{eq:maxcal} till a sufficiently accurate set of parameters is provided that falls within the desired tolerances of rotational circle radius and velocity.
 
-The reader should note that a solution provided by the Nelder\_Mead() algorithm is not unique, i.e., there are multiple valid sets of motor values, $\mu_i$, that minimize circle radius. As long as all pivots are of the same magnitude, this just gives one of them.
+Two factors effect the radius the Droplet traces while attempting to spin: uneven step size and overall step size. If the step sizes are uneven, then the Droplet won't trace a true circle. When the step sizes are even, then the error in
+The reader should note that a solution provided by the Nelder\_Mead() algorithm is not unique. Since the circle radius is minimized when all three motors are the s
+
+, i.e., there are multiple valid sets of motor values, $\mu_i$, that minimize circle radius. As long as all pivots are of the same magnitude, this just gives one of them.
 \mycomment{Not sure what that last sentence means.}
 
 Additionally, this method identifies which motors are `flipped'---i.e., which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius.
@@ -278,9 +281,6 @@ This is done for each motor independently by having the Droplet walk straight in
 
 Simply calibrating for CW and then CCW spin doesn't work because it gives two sets of pivot magnitudes, one for CW and one for CCW rotation. Each set is matched with the other pivots in its set, but without additional information we have no information about the comparative magnitudes across the sets.
 
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 
@@ -289,10 +289,18 @@ We performed calibration for four different Droplets. Convergence of the optimiz
 
 \begin{figure}[!htb]
 \centering
+\includegraphics[width=\linewidth]{Images/radiiConverging.png}
+\caption{The mean of the best three points of the simplex after each pass through the Nelder-Mead optimization loop, shown for four different Droplets. After the optimization converges or a particularly good value is found, the motors are set to the best of all settings tested.}
+\label{fig:radiiConverging}
+\end{figure}
+
+\begin{figure}
+\centering
 \begin{tabular}{r|c|c|c|c|c|c}
  ID & $m_0$ & $-m_0$ & $m_1$ & $-m_1$ & $m_2$ & $-m_2$ \\
 \hline
 15 & 68 & -1 & 56 & -5 & \emph{40} & \emph{0}\\ 
+18 & 84 & -89 & 84 & 202 & \emph{128}  & \emph{290}\\
 \end{tabular}
 \caption{Sample of calibrated values for specific Droplets. \emph{Italicized} values indicate that that particular motor was flipped. $-m$ is used to indicate the reverse value for that motor.}
 \label{dropletValueTable}
