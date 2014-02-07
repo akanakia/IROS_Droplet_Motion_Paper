@@ -169,19 +169,23 @@ In practice, the proposed locomotion scheme only works with one motor being acti
 \subsection{Forward and inverse kinematics}
 Whereas each pivot motion happens at the maximal speed of the platform, we can approximate the effective speeds $\theta_i$ by introducing delays of varying length after each microscopic pivot. Assuming that low-level control of $\theta_i$ and switching between pivot motions happens much faster than actual motion, we can reduce the proposed mechanism to a circular robot with three standard wheels, albeit without kinematic constraints, at the same location and orientation as the motors shown in Figure \ref{dropletMotorDiagram} and retractable legs. Here, the absence of kinematic constraints lets the standard wheels skid frictionlessly in any direction, whereas the retractable legs allow to enable and disable pivot points, modeling the up and down movements of the platform. 
 
-In this reduced model, each motor $m_0$, $m_1$, and $m_2$ controls the angular velocity $\dot{theta}_0$, $\dot{theta}_1$ and $\dot{theta}_2$ around its associated pivot point opposite of the motor. This lets us derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$.
+In this reduced model, each motor $m_0$, $m_1$, and $m_2$ controls the angular velocity $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$ around its associated pivot point opposite of the motor. This lets us derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$.
 Here we assume the y-axis to be orthogonal to the spinning direction of motor 2, and the y-axis to to split the angle between the axis connecting motor 1 and leg 1, and the axis connecting motor 0 and leg 0.
 \begin{align}\label{eq:fwd}
 \dot{x}_r & = -L \dot{\theta}_0 \cos(2 \pi / 3) + L \dot{\theta}_1 \sin(\pi / 6) + L \dot{\theta}_2\\
+\nonumber
 \dot{y}_r & =  L \dot{\theta}_0 \sin(2 \pi / 3) - L \dot{\theta}_1 \cos(\pi / 6)\\
+\nonumber
 \dot{\theta}_r & = \dot{\theta}_0 + \dot{\theta}_1 + \dot{\theta}_2
 \end{align}
 Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $l$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. Notice that motor 2 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
 
 Equation \ref{eq:fwd} is a linear system with three unknowns, and we can solve for $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$:
-\begin{align}
+\begin{align}\label{eq:ik}
 \dot{\theta}_0 & = -\frac{\dot{x}_r}{L} + \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\\
+\nonumber
 \dot{\theta}_1 & = -\frac{\dot{x}_r}{L} - \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\\
+\nonumber
 \dot{\theta}_2 & = \frac{2 \dot{x}_r}{L} - \dot{\theta}_r
 \end{align}
 
@@ -327,6 +331,8 @@ The proposed control scheme relies on running the vibration motors at full speed
 Calibrating the Droplets via an overhead camera and off-the-shelf computer vision software allows to obtain results quickly and potentially scales to calibration of multiple robots at the same time. An alternative approach would be to rely on the Droplet's range-and-bearing system \cite{farrow14}, which would potentially allow a large number of Droplet to calibrate in parallel.
 
 The proposed forward and inverse kinematics are an approximation as the robots do not move in straight lines, but using a sequence of pivoting steps. While this effect is negligible over distances in the order of the robot's diameter, it is prohibitive to reach the accuracies that the stick-slip drive is capable off. For example, when ``spinning in place'', the robots' coordinate system moves in a radius in the order of millimeters. In the future, we wish to explore motion planning techniques to achieve sub-millimeter accuracy by combining a sequence of motion, much like a knight on a chess board needs to do to reach a neighboring cell. 
+
+Similarly, the inverse kinematics solutions in Equation \ref{eq:ik} provide correct, but possibly sub-optimal solutions. For example, solving for $\dot{x_r}=0$, $\dot{y}=0$ and $\dot{\theta}_r$ arbitrary, results in $\dot{\theta}_0=\dot{\theta}_r$, $\dot{\theta}_1=\dot{\theta}_r$ and $\dot{\theta}_2=-\dot{\theta}_r$. Albeit these values will let the robot spin in place with speed $\dot{\theta}_r$, these results are far from the optimal values $\dot{\theta}_0=\dot{\theta}_1=\dot{\theta}_2=\frac{\dot{\theta}_r}{3}$. 
 
 \section{Conclusion}
 We presented an omni-directional drive train and miniature robotic platform that relies on low-cost vibration motors. We have shown how we can overcome challenges with synchronization and manufacturing variability, which have thus far prevented this approach from practical viability. 
