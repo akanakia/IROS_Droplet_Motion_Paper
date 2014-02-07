@@ -284,7 +284,7 @@ Simply calibrating for CW and then CCW spin doesn't work because it gives two se
 \section{Results}
 
 \subsection{Calibration}
-We performed calibration for four different Droplets. Convergence of the optimization routine is shown in Figure \ref{fig:radiiConverging}, and final results are displayed in table \ref{DropletValueTable}, showing both the variability of the individual robots, as well as the similarity in resulting performance (radius of the resulting ``straight'' line).
+We performed calibration for four different Droplets. Figure \ref{fig:radiiConverging} shows convergence of the optimization routine, and Table~\ref{DropletValueTable} shows a sample of calibrated values. This demonstrates the variability of the individual robots as well as the similarity in resulting performance (radius of the resulting ``straight'' line).
 
 \begin{figure}[!htb]
 \centering
@@ -308,22 +308,29 @@ We performed calibration for four different Droplets. Convergence of the optimiz
 \subsection{Motion}
 In order to verify that the Droplets indeed walk in a S-shape wiggling motion, we recorded the path of an individual Droplet with a high-speed camera (Casio Exilim ZR200). A snapshot of the resulting trajectory is shown in Figure XXXX.
 
-We then let the Droplets walk in a square of edge-length XXXXX. Sample results for two Droplets are shown in \ref{fig:someting}. The effective error is XXXXXX and XXXXX cm [HERE PROVIDE THE MAGNITUDE OF THE ERROR FOR EACH DROPLET], with the orientation error less than XXXX degrees. [HERE PROVIDE AN EYEBALL ESTIMATE OF HOW MUCH THEY ARE OFF FROM 90 DEGREES]. 
+For a more robust demonstration of the calibrated Droplet's performance, we performed two additional experiments. Figure~\ref{fig:squareWalk} shows two attempts of a Droplet walking in a square pattern, produced by walking forward and turning 90 degrees to the right repeatedly. For the solid trial, with nominal square size of $8cm$, this resulted in a final position error of $2.75cm$ and a final orientation error of $27$ degrees. For the dashed trial, with nominal size $6.5cm$, this resulted in a final position error of $1.4cm$ and final orientation error of $39$ degrees.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=\linewidth]{Images/DropletWalksSquare}
 \caption{Two attempts (solid, dashed) of a calibrated Droplet walking in a square, combing straight motion with a rotation.}
-\label{fig:someting}
+\label{fig:squareWalk}
 \end{figure}
 
-Finally, we test omni-directional motion by having the Droplets drive in a triangular pattern without turning. Results are shown in Figure XXXX.
+Figure~\ref{fig:triangleWalk} shows two attempts of a Droplet walking a triangle pattern. This is done without rotations, using the two degrees of translational freedom. Both trials have a nominal side length of $6cm$. The final position errors were $3.28cm$ and $2.77cm$ for the solid and dashed paths respectively.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\linewidth]{Images/DropletWalksTriangle}
+\caption{Two attempts (solid, dashed) of a calibrated Droplet walking in a triangle without rotation. The two attempts are aligned so that the Droplet}
+\label{fig:triangleWalk}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
-The proposed control scheme relies on running the vibration motors at full speed for a brief moment of time. What this timing should be is an outcome of the optimization routine. While this approach leads to acceptable results and a wide range of possible motions, it is not necessarily optimal with respect to speed and power consumption. For example, we could also vary the voltage provided to the motors using a high-frequency PWM signal, which might lead to even better speed/power performance. We wish to explore this and other control schemes in future work, albeit increasing the search space is generally undesirable in a hardware-in-the-loop optimization scheme.  
+The proposed control scheme relies on running the vibration motors at full speed for a brief moment of time. What this timing should be is an outcome of the optimization routine. While this approach leads to acceptable results and a wide range of possible motions, it is not necessarily optimal with respect to speed and power consumption. For example, we could also vary the voltage provided to the motors using a high-frequency PWM signal, which might lead to even better speed/power performance. We wish to explore this and other control schemes in future work, though increasing the search space is generally undesirable in a hardware-in-the-loop optimization scheme.  
 
-Calibrating the Droplets via an overhead camera and off-the-shelf computer vision software allows to obtain results quickly and potentially scales to calibration of multiple robots at the same time. An alternative approach would be to rely on the Droplets' range-and-bearing system \cite{farrow14}, which would potentially allow a large number of Droplet to calibrate in parallel.
+Calibrating the Droplets via an overhead camera and off-the-shelf computer vision software allows to obtain results quickly and potentially scales to calibration of multiple robots at the same time. An alternative approach would be to rely on the Droplets' range-and-bearing system \cite{farrow14} which would potentially allow a large number of Droplet to calibrate in parallel without additional hardware.
 
 The proposed forward and inverse kinematics are an approximation as the robots do not move in straight lines, but using a sequence of pivoting steps. While this effect is negligible over distances in the order of the robot's diameter, it is prohibitive to reach the accuracies that the stick-slip drive is capable off. For example, when ``spinning in place'', the robots' coordinate system moves in a radius in the order of millimeters. In the future, we wish to explore motion planning techniques to achieve sub-millimeter accuracy by combining a sequence of motion, much like a knight on a chess board needs to do to reach a neighboring cell. 
 
