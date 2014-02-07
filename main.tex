@@ -45,7 +45,7 @@
 %
 
 \title{\LARGE \bf
-A Stick-Slip Omnidirectional Drive-train for Low-Cost Swarm Robotics: Mechanism, Calibration and Control
+A Stick-Slip Omnidirectional Drive-Train for Low-Cost Swarm Robotics: Mechanism, Calibration, and Control
 }
 
 \author{John Klingner, Anshul Kanakia, Nicholas Farrow, Dustin Reishus and Nikolaus Correll%
@@ -71,7 +71,7 @@ We present an omni-directional drive train for swarm robotic platforms that reli
 \section{Introduction}
 We present a low-cost miniature robot drive-train that approximates omni-directional motion using three vibration motors. Classically, miniature robotic platforms such as r-one \cite{mclurkin2013low}, Jasmine \cite{jasmine} and Alice \cite{alice} require geared motors, which are expensive and difficult to miniaturize. The proposed drive-train is a variant of the ``stick-slip'' actuator that has been introduced in \cite{breguet1998stick}, and has been shown to be particularly attractive for high precision movements \cite{brufau2005micron,chu2006novel,martel2001three,martel2005fundamental,eigoli2012locomotion} and force control \cite{vartholomeos2008analysis}.   
 
-Whereas stick-slip actuators traditionally require to change their length, e.g., using piezo ceramics,  \cite{breguet1998stick, martel2005fundamental}, a similar effect can be achieved using a vibration motor, an effect well known from the ``Bristle-bot'' series of toys. The simplicity and availability of this actuator  has led to its use on low-cost miniature robot platforms such as the Kilobots \cite{rubenstein2012kilobot} based on the design presented in \cite{Vartholomeos2006}, which approximates the dynamics of a differential wheel platform (see also \cite{spartali2013speed} for additional analysis). Achieving fully holonomic motion on the plane requires at least three vibration motors, however. Whereas \cite{Vartholomeos2005} proposes a symmetric three motor design and its analysis, their approach requires all motors to be in phase, which is not feasible on a low-cost platform. This paper addresses these problems by presenting a design, controller and calibration routine that allows omnidirectional motion on a ping-pong ball sized robot ``Droplet'' (Figure \ref{Droplets}).
+Whereas stick-slip actuators traditionally require changing their length, e.g., using piezo ceramics,  \cite{breguet1998stick, martel2005fundamental}, a similar effect can be achieved using a vibration motor, an effect well- known from the ``Bristle-bot'' series of toys. The simplicity and availability of this actuator  has led to its use on low-cost miniature robot platforms such as the Kilobots \cite{rubenstein2012kilobot} based on the design presented in \cite{Vartholomeos2006}, which approximates the dynamics of a differential wheel platform (see also \cite{spartali2013speed} for additional analysis). Achieving fully holonomic motion on the plane requires at least three vibration motors, however. Whereas \cite{Vartholomeos2005} proposes a symmetric three motor design and its analysis, their approach requires all motors to be in phase, which is not feasible on a low-cost platform. This paper addresses these problems by presenting a design, controller and calibration routine that allows omnidirectional motion on a ping-pong ball sized robot ``Droplet'' (Figure \ref{Droplets}).
 
 \begin{figure}[!htb]
 	\centering
@@ -183,12 +183,13 @@ Here we assume the $y$-axis to be orthogonal to the spinning direction of motor 
 Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $l$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. Notice that motor 2 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
 
 Equation \ref{eq:fwd} is a linear system with three unknowns, and we can solve for $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$:
-\begin{align}\label{eq:icky}
+\begin{align}\label{eq:ik}
 \dot{\theta}_0 & = -\frac{\dot{x}_r}{L} + \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\notag\\
 \dot{\theta}_1 & = -\frac{\dot{x}_r}{L} - \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\notag\\
 \dot{\theta}_2 & = \frac{2 \dot{x}_r}{L} - \dot{\theta}_r
 \end{align}
-The rotational velocity values from \eqref{eq:icky} can now be transformed to motor values supplied to the Droplet to achieve desired motion in the $\{\dot{x}_r, \dot{y}_r, \dot{theta}_r\}$ coordinate frame using auto-calibration techniques discussed in the following section.
+
+The rotational velocity values from \eqref{eq:ik} can now be transformed to motor values supplied to the Droplet to achieve desired motion in the $\{\dot{x}_r, \dot{y}_r, \dot{\theta}_r\}$ coordinate frame using auto-calibration techniques discussed in the following section.
 
 
 
@@ -199,7 +200,7 @@ Additional challenges arising from low-cost hardware is that achieving equal ste
 It is possible to calibrate each platform manually, by setting values and eyeballing how well they work. As stated earlier, however, this platform is motivated by a desire for low-cost, large scale robot swarms.  Manual calibration of a swarm of thousands of robots would be completely impractical, and so we automate the process.
 
 \subsection{Experimental Setup}
-The motors are kept at a fixed $100\%$ duty cycle. Each step, we turn a motor on for a fixed amount of time, $t_{\text{on}}$, plus some offset, $\tau$,  which varies for each motor direction. Next, all motors are off for a fixed amount of time, $t_{\text{off}}$. Figure~\ref{pwmSignals} shows this in more detail. We done the vector of calibration values for each motor direction $\vec{\tau}$. Calibration is done by changing the $\vec{\tau}$ values such that the pivot induced by the motors is the same. These values are integers of magnitude $^1/_{32}$$ms$. For our platform, $t_{\text{on}}$ is $30ms$, which was determined to be the minimum amount of time required to induce pivoting for a typical motor. Similarly, $t_{\text{off}}$ is the time required for vibrations of the system to settle---a shorter off time causes platform instability.
+The motors are kept at a fixed $100\%$ duty cycle. Each step, we turn a motor on for a fixed amount of time, $t_{\text{on}}$, plus some offset, $\tau$,  which varies for each motor direction. Next, all motors are off for a fixed amount of time, $t_{\text{off}}$. Figure~\ref{fig:pwmSignals} shows this in more detail. We denote the vector of calibration values for each motor direction $\vec{\tau}$. Calibration is done by changing the $\vec{\tau}$ values such that the pivot induced by the motors is the same. These values are integers of magnitude $^1/_{32}$$ms$. For our platform, $t_{\text{on}}$ is $30ms$, which was determined to be the minimum amount of time required to induce pivoting for a typical motor. Similarly, $t_{\text{off}}$ is the time required for vibrations of the system to settle---a shorter off time causes platform instability.
 
 \begin{figure}[!htb]
 \centering
@@ -253,7 +254,7 @@ The simplex algorithm attempts to minimize the radius of the circle that the Dro
 \end{equation}
 where $\alpha$ and $\beta$ are weighting constants such that $\alpha > \beta$, as we prefer motor values that minimize circle radius over rotational speed.
 
-Each of the four vertices in the simplex is a set of three motor calibration parameters, i.e., $\spx = \{\vec{\tau^1}, \vec{\tau^2}, \vec{\tau^3}, \vec{\tau^4}\}$, where $\vec{\tau^i} = \{\tau^i_1, \tau^i_2, \tau^i_3\}$. The algorithm attempts to provide iteratively better motor control parameters by solving the optimization problem \eqref{eq:maxcal} until a sufficiently accurate set of parameters is provided that falls within the desired tolerances of rotational circle radius and velocity.
+Each of the four vertices in the simplex is a set of three motor calibration parameters, i.e., $\spx = \{\vec{\tau}^1, \vec{\tau}^2, \vec{\tau}^3, \vec{\tau}^4\}$, where $\vec{\tau}^i = \{\tau^i_1, \tau^i_2, \tau^i_3\}$. The algorithm attempts to provide iteratively better motor control parameters by solving the optimization problem \eqref{eq:maxcal} until a sufficiently accurate set of parameters is provided that falls within the desired tolerances of rotational circle radius and velocity.
 
 Additionally, this method identifies which motors are `flipped'---i.e., which motors spin opposite from what's expected. This is because having the motor directions wrong results in a large radius. Once we have clockwise spin calibrated, this is equivalent to having three matched pivot sizes for the motors' clockwise spins. To finish calibrating, we just need to find counterclockwise values that match the clockwise ones. This is done for each motor independently by having the Droplet walk straight in a direction. Now, we want to maximize the radius of the the circle traced by the Droplet. As the Droplet improves straight-line motion accuracy, the radius of the circle transcribed by its motion approaches $\infty$. A binary search is performed over the space of possible clockwise values for each motor.
 
@@ -263,7 +264,7 @@ Note that since the Nelder-Mead algorithm also treats flipped motors, it's possi
 \section{Results}
 
 \subsection{Calibration}
-We performed calibration for four different Droplets. Figure \ref{fig:radiiConverging} shows convergence of the optimization routine, and Table~\ref{DropletValueTable} shows a sample of calibrated values. This demonstrates the variability of the individual robots as well as the similarity in resulting performance (radius of the resulting ``straight'' line).
+We performed calibration for four different Droplets. Figure \ref{fig:radiiConverging} shows convergence of the optimization routine, and Table~\ref{DropletValueTable} shows a sample of calibrated values. This demonstrates the variability of the individual robots.
 
 \begin{figure}[!htb]
 \centering
