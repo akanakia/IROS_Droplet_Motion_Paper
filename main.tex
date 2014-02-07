@@ -71,19 +71,19 @@ We present an omni-directional drive train for swarm robotic platforms that reli
 \section{Introduction}
 We present a low-cost miniature robot drive-train that approximates omni-directional motion using three vibration motors. Classically, miniature robotic platforms such as r-one \cite{mclurkin2013low}, Jasmine \cite{jasmine} and Alice \cite{alice} require geared motors, which are expensive and difficult to miniaturize. The proposed drive-train is a variant of the ``stick-slip'' actuator that has been introduced in \cite{breguet1998stick}, and has been shown to be particularly attractive for high precision movements \cite{brufau2005micron,chu2006novel,martel2001three,martel2005fundamental,eigoli2012locomotion} and force control \cite{vartholomeos2008analysis}.   
 
-Whereas stick-slip actuators traditionally require to change their length, e.g., using piezo ceramics,  \cite{breguet1998stick, martel2005fundamental}, a similar effect can be achieved using a vibration motor, an effect well known from the ``Bristle-bot'' series of toys. The simplicity and availability of this actuator  has led to its use on low-cost miniature robot platforms such as the Kilobots \cite{rubenstein2012kilobot} based on the design presented in \cite{Vartholomeos2006}, which approximates the dynamics of a differential wheel platform (see also \cite{spartali2013speed} for additional analysis). Achieving fully holonomic motion on the plane requires at least three vibration motors, however. Whereas \cite{Vartholomeos2005} proposes a symmetric three motor design and its analysis, their approach requires all motors to be in phase, which is not feasible on a low-cost platform. This paper addresses these problems by presenting a design, controller and calibration routine that allows omnidirectional motion on a ping-pong ball sized robot ``Droplet'' (Figure \ref{droplets}).
+Whereas stick-slip actuators traditionally require to change their length, e.g., using piezo ceramics,  \cite{breguet1998stick, martel2005fundamental}, a similar effect can be achieved using a vibration motor, an effect well known from the ``Bristle-bot'' series of toys. The simplicity and availability of this actuator  has led to its use on low-cost miniature robot platforms such as the Kilobots \cite{rubenstein2012kilobot} based on the design presented in \cite{Vartholomeos2006}, which approximates the dynamics of a differential wheel platform (see also \cite{spartali2013speed} for additional analysis). Achieving fully holonomic motion on the plane requires at least three vibration motors, however. Whereas \cite{Vartholomeos2005} proposes a symmetric three motor design and its analysis, their approach requires all motors to be in phase, which is not feasible on a low-cost platform. This paper addresses these problems by presenting a design, controller and calibration routine that allows omnidirectional motion on a ping-pong ball sized robot ``Droplet'' (Figure \ref{Droplets}).
 
-\begin{figure}[h]
+\begin{figure}[!htb]
 	\centering
-		\includegraphics[width=0.8\columnwidth]{./Images/droplets.png}
+		\includegraphics[width=0.8\columnwidth]{./Images/Droplets.png}
 	\caption{The Droplet swarm robotics platform. Two Droplets are shown, one with the cover removed. A penny is included for scale. The background is the floor of alternating power and ground strips from which the Droplets draw power.}
-	\label{droplets}
+	\label{Droplets}
 \end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Droplet Swarm Robotic Platform}
-The Droplets are an open-source swarm robotic platform, with source code and manufacturing information available online\footnote{\url{https://github.com/correlllab/cu-droplet}}. Their body has a radius of $2.2cm$. They have three extended headers for legs located symmetrically around the robot $1.5cm$ from the center. The Droplets receive power from these legs through a floor with alternating strips of $+5V$ and $GND$. The Droplets use an Atmel Xmega128A3U microcontroller, along with Allegro A3901 Dual Motor Drivers. The motors are a low cost, coin-type model and are mounted symmetrically around the robot opposite the legs, near the outer edge. The motors are oriented such that the axis of rotation moves through the center of the robot and the opposite leg. As locomotion is not their primary intent, the vibration motors used here are inconsistent about both the direction in and frequency with which they spin.
+The Droplets are an open-source swarm robotic platform, with source code and manufacturing information available online\footnote{\url{https://github.com/correlllab/cu-Droplet}}. Their body has a radius of $2.2cm$. They have three extended headers for legs located symmetrically around the robot $1.5cm$ from the center. The Droplets receive power from these legs through a floor with alternating strips of $+5V$ and $GND$. The Droplets use an Atmel Xmega128A3U microcontroller, along with Allegro A3901 Dual Motor Drivers. The motors are a low cost, coin-type model and are mounted symmetrically around the robot opposite the legs, near the outer edge. The motors are oriented such that the axis of rotation moves through the center of the robot and the opposite leg. As locomotion is not their primary intent, the vibration motors used here are inconsistent about both the direction in and frequency with which they spin.
 
 \begin{figure}[h]
 	\centering
@@ -111,15 +111,15 @@ If we neglect friction, the platform will slide backwards and forwards due to th
 
 
 \subsection{Motion Principle Applied to Droplets}
-Combining the 1-DoF actuator described above with others to obtain a 3-DoF robotic platform is not trivial as it requires all motors to be in phase \cite{Vartholomeos2005}, and infeasible with low-cost hardware. Our proposed design deviates from \cite{Vartholomeos2005} by positioning our motors opposite, instead of above, the platform's legs as shown in Figure~\ref{dropletMotorDiagram}. This allows each motor to reduce friction of two legs at a time, letting the platform pivot around the third leg. 
+Combining the 1-DoF actuator described above with others to obtain a 3-DoF robotic platform is not trivial as it requires all motors to be in phase \cite{Vartholomeos2005}, and infeasible with low-cost hardware. Our proposed design deviates from \cite{Vartholomeos2005} by positioning our motors opposite, instead of above, the platform's legs as shown in Figure~\ref{DropletMotorDiagram}. This allows each motor to reduce friction of two legs at a time, letting the platform pivot around the third leg. 
 
 %With the simplifying assumption that the platform is a uniform mass, lets consider the forces applied to the platform as a single motor $m_i$ rotates. Since the platform touches the floor only with its three legs, it will be relevant to consider the downward force $f_i$ on each leg separately.
 
 \begin{figure}
 \centering
-\subfile{dropletDiagram}
+\subfile{DropletDiagram}
 \caption{Arrangement of vibration motors $m_0, m_1$ and $m_2$ and legs $l_0, l_1$ and $l_2$.}
-\label{dropletMotorDiagram}
+\label{DropletMotorDiagram}
 \end{figure}
 
 As the mass on the motor swings upwards, the friction experienced by each leg is reduced. Due to the location of the motor off-center, friction is reduced more for the two legs nearest the motor. The lateral force by the motor -- which is tangent to the platform's circular frame -- thus causes the platform to pivot about the leg opposite it.
@@ -143,7 +143,7 @@ x &=\arcsin\left(\frac{L\sin(\theta)}{2 L \sin(\frac{\theta}{2})}\right) \\
 \end{align}
 
 Given this angle $x$, and the known angle between the Droplet's $x$\~axis and the leg ($\phi_1$), we can calculate the direction of the platform's displacement:
-
+%
 \begin{align}
 \delta x_a &= C \cos(\pi - x - \phi)\\
 \nonumber
@@ -151,13 +151,13 @@ Given this angle $x$, and the known angle between the Droplet's $x$\~axis and th
 \end{align}
 
 Note also that the orientation of the Droplet has changed by $\theta$. Next, consider a second pivot by $m_2$ of $-\theta$. By symmetry, we now have:
-
+%
 \begin{align}
 \delta x_b &= -C\cos(\pi -x -\phi)\\
 \nonumber
 \delta y_b &= C \sin(\pi - x - \phi)
 \end{align}
-
+%
 and the orientation has now changed by $-\theta$, putting the Droplet back in its original orientation. 
 
 In practice, the proposed locomotion scheme only works with one motor being active at a time. In addition to the motor placement that allows pivoting, this assumption allows us to overcome the limitations of the motors being in phase as described in \cite{Vartholomeos2005}. Therefore, the robots are not moving straight, but crawl forward in a S-shape. In order to move straight, this requires an initial turn to counter the offset introduced by the S-shape. The size of this error is a function of $\theta$. As $\theta$ approaches $0$, so does the error. Similarly, when spinning each cycle of three motors doesn't leave us back at our exact original position, but it does bring us pretty close.
@@ -167,27 +167,31 @@ In practice, the proposed locomotion scheme only works with one motor being acti
 %To simplify, we focus on the platform moving in one of six directions: (0,180, $+/-$60, $+/-$120) degrees, as well as clockwise and counterclockwise rotation. It should be a straightforward extension to get arbitrary 3DoF motion by combining these directions.
 
 \subsection{Forward and inverse kinematics}
-Whereas each pivot motion happens at the maximal speed of the platform, we can approximate the effective speeds $\theta_i$ by introducing delays of varying length after each microscopic pivot. Assuming that low-level control of $\theta_i$ and switching between pivot motions happens much faster than actual motion, we can reduce the proposed mechanism to a circular robot with three standard wheels, albeit without kinematic constraints, at the same location and orientation as the motors shown in Figure \ref{dropletMotorDiagram} and retractable legs. Here, the absence of kinematic constraints lets the standard wheels skid frictionlessly in any direction, whereas the retractable legs allow to enable and disable pivot points, modeling the up and down movements of the platform. 
+Whereas each pivot motion happens at the maximal speed of the platform, we can approximate the effective speeds $\theta_i$ by introducing delays of varying length after each microscopic pivot. Assuming that low-level control of $\theta_i$ and switching between pivot motions happens much faster than actual motion, we can reduce the proposed mechanism to a circular robot with three standard wheels, albeit without kinematic constraints, at the same location and orientation as the motors shown in Figure \ref{DropletMotorDiagram} and retractable legs. Here, the absence of kinematic constraints lets the standard wheels skid frictionlessly in any direction, whereas the retractable legs allow to enable and disable pivot points, modeling the up and down movements of the platform. 
 
-In this reduced model, each motor $m_0$, $m_1$, and $m_2$ controls the angular velocity $\dot{theta}_0$, $\dot{theta}_1$ and $\dot{theta}_2$ around its associated pivot point opposite of the motor. This lets us derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$.
+In this reduced model, each motor $m_0$, $m_1$, and $m_2$ controls the angular velocity $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$ around its associated pivot point opposite of the motor. This lets us derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$.
 Here we assume the y-axis to be orthogonal to the spinning direction of motor 2, and the y-axis to to split the angle between the axis connecting motor 1 and leg 1, and the axis connecting motor 0 and leg 0.
 \begin{align}\label{eq:fwd}
 \dot{x}_r & = -L \dot{\theta}_0 \cos(2 \pi / 3) + L \dot{\theta}_1 \sin(\pi / 6) + L \dot{\theta}_2\\
+\nonumber
 \dot{y}_r & =  L \dot{\theta}_0 \sin(2 \pi / 3) - L \dot{\theta}_1 \cos(\pi / 6)\\
+\nonumber
 \dot{\theta}_r & = \dot{\theta}_0 + \dot{\theta}_1 + \dot{\theta}_2
 \end{align}
 Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $l$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. Notice that motor 2 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
 
 Equation \ref{eq:fwd} is a linear system with three unknowns, and we can solve for $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$:
-\begin{align}
+\begin{align}\label{eq:ik}
 \dot{\theta}_0 & = -\frac{\dot{x}_r}{L} + \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\\
+\nonumber
 \dot{\theta}_1 & = -\frac{\dot{x}_r}{L} - \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\\
+\nonumber
 \dot{\theta}_2 & = \frac{2 \dot{x}_r}{L} - \dot{\theta}_r
 \end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental platform}
-We constructed the ``Droplets'' platform, a ping-pong ball sized, spherical robot with a flat bottom, three legs, three coin-type vibration motors arranged as shown in Figure \ref{dropletMotorDiagram}, and a 6-directional infrared range and bearing system \cite{farrow14}. The legs are spaced 120 degrees apart 15.1mm (0.595in) from the center.
+We constructed the ``Droplets'' platform, a ping-pong ball sized, spherical robot with a flat bottom, three legs, three coin-type vibration motors arranged as shown in Figure \ref{DropletMotorDiagram}, and a 6-directional infrared range and bearing system \cite{farrow14}. The legs are spaced 120 degrees apart 15.1mm (0.595in) from the center.
 
 The vibration motors (Hochar) are circular shaped, 10mm in diameter and 2.7mm thick, weigh 1.1g, rated at 3V DC, vibrate at 200$\pm$42 Hz, and of the type commonly used in cell phones and pagers. Although equipped with color-coded wires, the direction of spin is arbitrary and differences in vibration frequency and strength are significant. 
 
@@ -196,7 +200,7 @@ Motors are controlled via an H-Bridge (Allegro A3901) that is driven by a pulse-
 The motors are kept at a a fixed $100\%$ duty cycle. Each step, we turn a motor on for $motorOnTime+offset$, then all motors are off for $motorOffTime$ before the next motor turns on. Figure~\ref{pwmSignals} shows this in more detail. Calibration is done by setting the offset value for each direction of each motor, such that each step causes a pivot of the same magnitude. These offset durations are integers of magnitude $(1/32)^{nd}$ms. For our platform, $motorOnTime$ is $30ms$ and $motorOffTime$ is $40ms$.
 \mycomment{Better name than `motorOnTime' would be good and `motorOffTime' and offset would be good.}
 
-\begin{figure}
+\begin{figure}[!htb]
 \centering
 \subfile{PWMfigure}
 \caption{The PWM signals for motion in the 0 direction. If both forward (FW) and reverse (RV) are high, the motor is braking. If only one signal is high, the motor rotates in that direction. Thus, to spin forward we keep FW high and drop RV low when we want the motor to actually spin.}
@@ -205,7 +209,7 @@ The motors are kept at a a fixed $100\%$ duty cycle. Each step, we turn a motor 
 \mycomment{Planning on adding more to PWM diagram.}
 
 
-\begin{figure}[h]
+\begin{figure}[!htb]
 	\centering
 	\subfile{motorLocations}
 	\caption{An image of the Droplet's shell and vibration motors in place. The locations where the legs are mounted are labeled.}
@@ -224,7 +228,7 @@ To update the Droplet's calibration settings, we find the least-squares best-fit
 
 We communicate with and control the platform through a serial to IR transmitter. 
 
-\begin{figure}
+\begin{figure}[!htb]
 \includegraphics[width=\linewidth]{images/cameraView}
 \caption{View from the overhead camera onto the Droplet equipped with a fiducial marker that can be recognized by RoboRealm.\label{fig:expsetup}} 
 \end{figure}
@@ -257,7 +261,7 @@ We communicate with and control the platform through a serial to IR transmitter.
 
 We use the popular Nelder-Mead Simplex algorithm \cite{NelderMead} to calibrate motor parameters for spinning in a given direction (clockwise or anti-clockwise), as seen in Alg.(\ref{alg:spx}). 
 
-The simplex algorithm attempts to minimize the radius of the circle that the droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function used by the algorithm is,
+The simplex algorithm attempts to minimize the radius of the circle that the Droplet makes while rotating while, at the same time, maximize the speed of rotation. The objective function used by the algorithm is,
 \begin{equation}
 \text{(max.)} \quad -\alpha.r_{circ}(\mu_1, \mu_2, \mu_3) + \beta.v_{rot}(\mu_1, \mu_2, \mu_3)\label{eq:maxcal}
 \end{equation}
@@ -277,21 +281,15 @@ It's possible that Nelder-Mead will find a CCW spin, with all motors flipped. Af
 
 Once we have clockwise spin calibrated, this is equivalent to having three matched pivot sizes for the motors' clockwise spins. To finish calibrating, we just need to find counterclockwise values that match the clockwise ones.
 
-This is done for each motor independently by having the Droplet walk straight in a direction. Now, we want to maximize the radius of the the circle traced by the Droplet. As the droplet improves straight-line motion accuracy, the radius of the circle transcribed by its motion approaches $\infty$. Changes in calibration values are made proportional to circle radius until we've reached the limits imposed by the resolution of our calibration value.
+This is done for each motor independently by having the Droplet walk straight in a direction. Now, we want to maximize the radius of the the circle traced by the Droplet. As the Droplet improves straight-line motion accuracy, the radius of the circle transcribed by its motion approaches $\infty$. Changes in calibration values are made proportional to circle radius until we've reached the limits imposed by the resolution of our calibration value.
 
 Simply calibrating for CW and then CCW spin doesn't work because it gives two sets of pivot magnitudes, one for CW and one for CCW rotation. Each set is matched with the other pivots in its set, but without additional information we have no information about the comparative magnitudes across the sets.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 
-What are the experiments that we have done to show that this works? All plots here.
-
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=\linewidth]{Images/dropletWalksSquare}
-\caption{Two attempts (solid, dashed) of a calibrated Droplet walking in a square, combing straight motion with a rotation.}
-\label{fig:squareExperiment}
-\end{figure}
+\subsection{Calibration}
+We performed calibration for four different Droplets. Convergence of the optimization routine is shown in Figure \ref{fig:radiiConverging}, and final results are displayed in table \ref{DropletValueTable}, showing both the variability of the individual robots, as well as the similarity in resulting performance (radius of the resulting ``straight'' line).
 
 \begin{figure}[!htb]
 \centering
@@ -299,6 +297,7 @@ What are the experiments that we have done to show that this works? All plots he
 \caption{The mean of the best three points of the simplex after each pass through the Nelder-Mead optimization loop, shown for four different Droplets. After the optimization converges or a particularly good value is found, the motors are set to the best of all settings tested.}
 \label{fig:radiiConverging}
 \end{figure}
+
 \begin{figure}
 \centering
 \begin{tabular}{r|c|c|c|c|c|c}
@@ -308,21 +307,37 @@ What are the experiments that we have done to show that this works? All plots he
 18 & 84 & -89 & 84 & 202 & \emph{128}  & \emph{290}\\
 \end{tabular}
 \caption{Sample of calibrated values for specific Droplets. \emph{Italicized} values indicate that that particular motor was flipped. $-m$ is used to indicate the reverse value for that motor.}
-\label{dropletValueTable}
+\label{DropletValueTable}
 \end{figure}
 
-\mycomment{Going to be adding at least a couple more droplets to that table, hopefully!}
+\subsection{Motion}
+In order to verify that the Droplets indeed walk in a S-shape wiggling motion, we recorded the path of an individual Droplet with a high-speed camera (Casio Exilim ZR200). A snapshot of the resulting trajectory is shown in Figure XXXX.
+
+We then let the Droplets walk in a square of edge-length XXXXX. Sample results for two Droplets are shown in \ref{fig:someting}. The effective error is XXXXXX and XXXXX cm [HERE PROVIDE THE MAGNITUDE OF THE ERROR FOR EACH DROPLET], with the orientation error less than XXXX degrees. [HERE PROVIDE AN EYEBALL ESTIMATE OF HOW MUCH THEY ARE OFF FROM 90 DEGREES]. 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\linewidth]{Images/DropletWalksSquare}
+\caption{Two attempts (solid, dashed) of a calibrated Droplet walking in a square, combing straight motion with a rotation.}
+\label{fig:someting}
+\end{figure}
+
+Finally, we test omni-directional motion by having the Droplets drive in a triangular pattern without turning. Results are shown in Figure XXXX.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
-The proposed control scheme relies on running the vibration motors at full speed for a brief moment of time. What this timing should be is an outcome of the optimization routine. While this approach leads to acceptable results and a wide range of possible motions, it is not necessarily optimal with respect to speed and power consumption. Alternatively, we could also vary the voltage provided to the motors using a high-frequency PWM signal, which might lead to even better speed/power performance. We wish to explore this and other control schemes in future work, albeit increasing the search space is generally undesirable in a hardware-in-the-loop optimization scheme.  
+The proposed control scheme relies on running the vibration motors at full speed for a brief moment of time. What this timing should be is an outcome of the optimization routine. While this approach leads to acceptable results and a wide range of possible motions, it is not necessarily optimal with respect to speed and power consumption. For example, we could also vary the voltage provided to the motors using a high-frequency PWM signal, which might lead to even better speed/power performance. We wish to explore this and other control schemes in future work, albeit increasing the search space is generally undesirable in a hardware-in-the-loop optimization scheme.  
 
-Calibrating the Droplets via an overhead camera and off-the-shelf computer vision software allows to obtain results quickly and potentially scales to calibration of multiple robots at the same time. An alternative approach would be to rely on the Droplet's range-and-bearing system \cite{farrow14}, which would potentially allow a large number of Droplet to calibrate in parallel.
+Calibrating the Droplets via an overhead camera and off-the-shelf computer vision software allows to obtain results quickly and potentially scales to calibration of multiple robots at the same time. An alternative approach would be to rely on the Droplets' range-and-bearing system \cite{farrow14}, which would potentially allow a large number of Droplet to calibrate in parallel.
 
 The proposed forward and inverse kinematics are an approximation as the robots do not move in straight lines, but using a sequence of pivoting steps. While this effect is negligible over distances in the order of the robot's diameter, it is prohibitive to reach the accuracies that the stick-slip drive is capable off. For example, when ``spinning in place'', the robots' coordinate system moves in a radius in the order of millimeters. In the future, we wish to explore motion planning techniques to achieve sub-millimeter accuracy by combining a sequence of motion, much like a knight on a chess board needs to do to reach a neighboring cell. 
 
-\section{Conclusion}
+Similarly, the inverse kinematics solutions in Equation \ref{eq:ik} provide correct, but possibly sub-optimal solutions. For example, solving for $\dot{x_r}=0$, $\dot{y}=0$ and $\dot{\theta}_r$ arbitrary, results in $\dot{\theta}_0=\dot{\theta}_r$, $\dot{\theta}_1=\dot{\theta}_r$ and $\dot{\theta}_2=-\dot{\theta}_r$. Albeit these values will let the robot spin in place with speed $\dot{\theta}_r$, these results are far from the optimal values $\dot{\theta}_0=\dot{\theta}_1=\dot{\theta}_2=\frac{\dot{\theta}_r}{3}$. 
 
+\section{Conclusion}
+We presented an omni-directional drive train and miniature robotic platform that relies on low-cost vibration motors. We have shown how we can overcome challenges with synchronization and manufacturing variability, which have thus far prevented this approach from practical viability. 
+
+Whereas the proposed auto-calibration allows us to make up for manufacturing variability, it still requires significant manual labor to calibrate individual platforms, which is tedious for swarms with thousands of robots that we envision. In the future, we will therefore investigate methods to calibrate robots collaboratively and online.  
 
 
 \section*{Acknowledgments} We thank Dr.\ Timothy Caldwell for helpful discussion on suitable optimization methods. 
