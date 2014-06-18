@@ -2,29 +2,68 @@
 
 \begin{document}
 
-\begin{tikzpicture}[scale=1,auto]
+\begin{tikzpicture}[scale=0.65,auto]
 
 \def\rectSize{2}
 \def\platformHeight{0.2}
 \def\supportWidth{0.2}
 \def\motArmLength{1.5}
-\def\motTheta{-20}
 \def\motMassRad{0.5}
-\def\motArcTheta{45}
-\pgfmathsetmacro{\midwayArc}{(\motArcTheta/2)+\motTheta}
+\def\motAxleRad{0.05}
+\def\motArcTheta{40}
+\def\motArcPreTheta{20}
+\def\legLength{0.5}
+\def\legWidth{0.2}
 
-\draw[draw=none] (-\rectSize,-\rectSize) rectangle (\rectSize,\rectSize);
 
-\draw[thick] (\supportWidth,0) --  (\supportWidth,-\rectSize+\platformHeight) -- (\rectSize,-\rectSize+\platformHeight) -- (\rectSize,-\rectSize) -- (-\rectSize,-\rectSize) -- 
-		(-\rectSize,-\rectSize+\platformHeight) --  (-\supportWidth,-\rectSize+\platformHeight) -- (-\supportWidth,0) arc (180:0:\supportWidth);
-
+\def\magicBox{
+\draw[thick,black] (-\rectSize,-\rectSize) -- (-\rectSize,-\rectSize-\legLength+\legWidth/2) -- (-\rectSize+\legWidth/2,-\rectSize-\legLength) -- (-\rectSize+\legWidth,-\rectSize-\legLength+\legWidth/2) -- (-\rectSize+\legWidth,-\rectSize);
+\draw[thick,black] (\rectSize,-\rectSize) -- (\rectSize,-\rectSize-\legLength+\legWidth/2) -- (\rectSize-\legWidth/2,-\rectSize-\legLength) -- (\rectSize-\legWidth,-\rectSize-\legLength+\legWidth/2) -- (\rectSize-\legWidth,-\rectSize);
+\draw[thick,black,fill=black!10] (-\rectSize,-\rectSize) rectangle (\rectSize,\rectSize-\legLength);
 \draw[thick,fill=white] (\motTheta:\motArmLength) circle (\motMassRad);
-
+\draw[thick,fill=white] (0,0) circle (\motAxleRad);
 \draw[thick, double distance=1pt,round cap-triangle 90 cap] (0,0) -- (\motTheta:\motArmLength);
+\draw[-latex,dashed] (\motTheta-\motArcPreTheta:\motArmLength) arc (\motTheta-\motArcPreTheta:\motTheta+\motArcTheta:\motArmLength);
+}
 
-\draw[-latex] (\motTheta:\motArmLength) arc (\motTheta:\motTheta+\motArcTheta:\motArmLength);
-\draw[black!50] (0,0) -- (\motTheta+\motArcTheta:\motArmLength+0.3);
-\node[fill=white,circle,inner sep=1.5] at (\midwayArc:\motArmLength+0.2) {$\omega$};
+
+
+\fill[black!25] (-9,-\rectSize-2.5*\legLength) rectangle (15,-\rectSize-\legLength);
+\draw[thick, black] (-9,-\rectSize-\legLength) -- (15,-\rectSize-\legLength);
+
+\def\motTheta{-60}
+\begin{scope}[shift={(-6,0)}]
+\magicBox
+\draw[thick,dashed] (0,1.5*\rectSize) -- (0,-\rectSize-2.5*\legLength-0.1);
+\end{scope}
+
+\def\motTheta{70}
+\begin{scope}[shift={(0,0)}]
+\begin{scope}[shift={(0.7,0.5)}]
+\magicBox
+\end{scope}
+\draw[thick,black] (-3,1.5*\rectSize) -- (-3,-\rectSize-3*\legLength-0.1);
+\draw[thick,dashed] (0,1.5*\rectSize) -- (0,-\rectSize-2.5*\legLength-0.1);
+\end{scope}
+
+\def\motTheta{170}
+\begin{scope}[shift={(6,0)}]
+\begin{scope}[shift={(0.5,0.2)}]
+\magicBox
+\end{scope}
+\draw[thick,black] (-3,1.5*\rectSize) -- (-3,-\rectSize-2.5*\legLength-0.1);
+\draw[thick,dashed] (0,1.5*\rectSize) -- (0,-\rectSize-2.5*\legLength-0.1);
+\end{scope}
+
+\def\motTheta{-110}
+\begin{scope}[shift={(12,0)}]
+\begin{scope}[shift={(0.4,0.0)}]
+\magicBox
+\end{scope}
+\draw[thick,black] (-3,1.5*\rectSize) -- (-3,-\rectSize-2.5*\legLength-0.1);
+\draw[thick,dashed] (0,1.5*\rectSize) -- (0,-\rectSize-2.5*\legLength-0.1);
+
+\end{scope}
 
 \end{tikzpicture}
 
