@@ -26,12 +26,12 @@
 	\pgftransformrotate{\dropletOrient}
 		\draw[thick] (0cm,0cm) circle(2.2cm);
 		\draw[gray!20] (0cm, 0cm) -- (2.2cm,0cm);
-		\foreach \i in {0,...,2} {
+		\foreach \i in {1,...,3} {
 			\node[rectangle,draw=black,fill=\motShade,minimum width=\motWidth, minimum height=\motHeight, 
-						rotate around={(-\i*120+\dropletOrient):(0,0)},label={[label distance=-0.05cm]-160:$m_\i$}] at (-120*\i:\motDist) {};
-			\node[circle, draw=none, fill=\legShade, inner sep=\legRad,rotate around={-\i*120:(0,0)},label={[label distance=-0.15cm]-10:$l_\i$}] at (180-120*\i:\legDist) {};
+						rotate around={(-\i*120-240+\dropletOrient):(0,0)},label={[label distance=-0.05cm]-160:$m_\i$}] at (-120*\i-240:\motDist) {};
+			\node[circle, draw=none, fill=\legShade, inner sep=\legRad,rotate around={-\i*120-60:(0,0)},label={[label distance=-0.15cm]-10:$l_\i$}] at (-60-120*\i:\legDist) {};
 		}
-		\draw[] (0cm, 0cm) -- (60:\legDist) node[below, midway] {$L$};
+		\draw[] (0cm, 0cm) -- (60:\legDist) node[below, midway] {\large$\ell$};
 
 		%\node[inner sep=0mm, fill=white] at (-\rxPhi*0.5+\txPhi*0.5 + \rxPhi:0.35cm) {$\theta$};
 

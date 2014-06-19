@@ -6,7 +6,7 @@
 \IEEEoverridecommandlockouts
 \overrideIEEEmargins 
 \usepackage{tikz}
-\usetikzlibrary{calc,decorations.markings,arrows}
+\usetikzlibrary{calc,decorations.markings,arrows, fadings}
 \usepackage{tikz-timing}
 \usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
 \usepackage{amsmath}
@@ -20,6 +20,8 @@
 \usepackage{xspace}
 \usepackage{subfiles}
 \usepackage{url}
+\usepackage[outline]{contour}
+\contourlength{0.18em}
 
 % Packages for including pseudo-code
 \usepackage{algorithmicx}
@@ -45,14 +47,10 @@
 %
 
 \title{\LARGE \bf
-A Stick-Slip Omnidirectional Drive-Train for Low-Cost Swarm Robotics: Mechanism, Calibration, and Control
+A Stick-Slip Omnidirectional Powertrain for Low-Cost Swarm Robotics: Mechanism, Calibration, and Control
 }
 
-<<<<<<< HEAD
-\author{John Klingner and ??? and Nicholas Farrow and Dustin Reishus and Nikolaus Correll%
-=======
 \author{John Klingner, Anshul Kanakia, Nicholas Farrow, Dustin Reishus and Nikolaus Correll%
->>>>>>> 54538b96769c13982eec8c6c942ad4dcd8d3f1d9
 \thanks{Department of Computer Science,
 University of Colorado at Boulder,
  Boulder, CO 80309,
@@ -73,7 +71,7 @@ We present an omnidirectional drive train for swarm robotic platforms that relie
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-We present a low-cost miniature robot drive-train that approximates omnidirectional motion using three vibration motors. Classically, miniature robotic platforms such as r-one \cite{mclurkin2013low}, Jasmine \cite{jasmine} and Alice \cite{alice} require geared motors, which are expensive and difficult to miniaturize. The proposed drive-train is a variant of the ``stick-slip'' actuator that has been introduced in \cite{breguet1998stick}, and has been shown to be particularly attractive for high precision movements \cite{brufau2005micron,chu2006novel,martel2001three,martel2005fundamental,eigoli2012locomotion} and force control \cite{vartholomeos2008analysis}.   
+We present a low-cost miniature robot powertrain that approximates omnidirectional motion using three vibration motors. Classically, miniature robotic platforms such as r-one \cite{mclurkin2013low}, Jasmine \cite{jasmine} and Alice \cite{alice} require geared motors, which are expensive and difficult to miniaturize. The proposed powertrain is a variant of the ``stick-slip'' actuator that has been introduced in \cite{breguet1998stick}, and has been shown to be particularly attractive for high precision movements \cite{brufau2005micron,chu2006novel,martel2001three,martel2005fundamental,eigoli2012locomotion} and force control \cite{vartholomeos2008analysis}.   
 
 Whereas stick-slip actuators traditionally require changing their length, e.g., using piezo ceramics,  \cite{breguet1998stick, martel2005fundamental}, a similar effect can be achieved using a vibration motor, an effect well- known from the ``Bristle-bot'' series of toys. The simplicity and availability of this actuator  has led to its use on low-cost miniature robot platforms, such as the Kilobots, \cite{rubenstein2012kilobot} based on the design presented in \cite{Vartholomeos2006}, which approximates the dynamics of a differential wheel platform (see also \cite{spartali2013speed} for additional analysis). Achieving fully holonomic motion on the plane requires at least three vibration motors, however. Whereas \cite{Vartholomeos2005} proposes a symmetric three motor design and its analysis, their approach requires all motors to be in phase, which is not feasible on a low-cost platform. This paper addresses these problems by presenting a design, controller and calibration routine that allows omnidirectional motion on a ping-pong ball sized robot ``Droplet'' (Figure \ref{Droplets}).
 
@@ -104,93 +102,48 @@ The Droplets receive power from these legs through a floor with alternating stri
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Principle of Operation}
 
-\subsection{Base Motion Principle}
-A vibration motor is a DC motor with a mass on the shaft, such that the center of mass is not on the axis of rotation. Spinning the motor throws the mass around, causing motion of the entire motor body due to inertia. As the mass swings through its circular path, the motor experiences a force towards that mass. Over the course of a full rotation, the net force experienced by the motor is 0. This is illustrated in Figure \ref{motorDiagram}.
+\subsection{1-DoF Stick-slip Motion}
+A vibration motor is a DC motor with a mass on the shaft, such that the center of mass is not on the axis of rotation. Spinning the motor throws the mass around, causing motion of the entire motor body due to inertia. As the mass swings through its circular path, the motor experiences a force towards that mass. Over a full rotation, the net force experienced by the motor is 0.
 
 \begin{figure*}[!htb]
 \centering
 \subfile{singleDoFModel}
-\caption{Simple 1DoF model of motion principle, from the side. Upwards motion of the motor creates upwards force, significantly reducing the friction between the two legs and the ground. Spinning the motor also results in a forward force, moving the platform forwards. Albeit completing the revolution creates a backwards force, friction also begins to increase, resulting in an overall forward motion \cite{Vartholomeos2005}.}
+\caption{Simple 1DoF model of motion principle, in a 2D world. Horizontal motion of the mass causes the platform to scoot right and left. The vertical motion of the mass effects the magnitude of the friction experienced by the platform as it scoots. Thus, the platform experiences net motion over a full rotation, in a direction determined by the rotation's direction \cite{Vartholomeos2005}.}
 \label{motorDiagram}
 \end{figure*}
 
-If we neglect friction, the platform will slide backwards and forwards due to the backwards and forwards forces from the mass, but experience no net translation. With friction, the vertical forces of the mass become relevant. The downward force of gravity is mitigated by the upward force from the swinging mass. Crucially, this means that the total downward force experienced by the platform is lower while the mass is swinging upwards. Thus, the platform experiences reduced friction while the mass is swinging upwards. The direction of lateral magnitude during this period of reduced friction (or, the direction the motor is spinning) determines the direction of travel, see also \cite{Vartholomeos2005,Vartholomeos2006} for a mathematical treatment of this model. Figure~\ref{motorDiagram} illustrates this process. Note that the robot does not actually need to jump up, as long as the upward force sufficiently reduces static friction. 
+If we neglect friction, the platform will slide backwards and forwards due to the backwards and forwards forces from the mass, but experience no net translation. With friction, the vertical forces of the mass become relevant. The downward force of gravity is mitigated by the upward force from the swinging mass. Crucially, this means that the total downward force experienced by the platform is lower while the mass is swinging upwards, and the effects of friction are reduced. The direction of the horizontal force during this period of reduced friction (or, the direction the motor is spinning) determines the direction of travel. See also \cite{Vartholomeos2005,Vartholomeos2006} for a mathematical treatment of this model. Figure~\ref{motorDiagram} illustrates this process. Note that the robot does not actually need to jump up, as long as the upward force sufficiently reduces static friction. 
 
 
 \subsection{Motion Principle Applied to Droplets}
-Combining the 1-DoF actuator described above with others to obtain a 3-DoF robotic platform is not trivial as it requires all motors to be in phase \cite{Vartholomeos2005}, and is infeasible with low-cost hardware. Our proposed design deviates from \cite{Vartholomeos2005} by positioning our motors opposite, instead of above, the platform's legs as shown in Figure~\ref{DropletMotorDiagram}. With this configuration, the motor forces cause the platform to pivot about the opposite leg.
-
-%With the simplifying assumption that the platform is a uniform mass, lets consider the forces applied to the platform as a single motor $m_i$ rotates. Since the platform touches the floor only with its three legs, it will be relevant to consider the downward force $f_i$ on each leg separately.
+Combining the 1-DoF actuator described above with others to obtain a 3-DoF robotic platform is not trivial as it requires all motors to be in phase \cite{Vartholomeos2005}, and is infeasible with low-cost hardware. In \cite{Vartholomeos2005}, the motors are positioned next to the legs. Figure~\ref{DropletMotorDiagram}. Our proposed alternative design positions the motors on the opposite side of the platform's center of mass from the legs. With this configuration, the forces from an individual motor cause the platform to pivot about the leg opposite. Our proposed locomotion scheme combines a sequence of individual pivots, with only one motor on at a time. This allows us to overcome the limitations of the motors being in phase described in \cite{Vartholomeos2005}.
 
 \begin{figure}[!htb]
 \centering
 \subfile{DropletDiagram}
-\caption{Arrangement of vibration motors $m_0, m_1$ and $m_2$ and legs $l_0, l_1$ and $l_2$.}
+\caption{Arrangement of vibration motors $m_1, m_2$ and $m_3$ and legs $l_1, l_2$ and $l_3$.}
 \label{DropletMotorDiagram}
 \end{figure}
 
-%\subsubsection{Straight motion}
-%\mycomment{Remove most of this subsection. Keep the last paragraph and justify it with ``words'' here.}
-%Let us consider a single pivot caused by motor $i$ ($m_i$), about leg $i$ ($l_i$), of some small, positive radial distance $\theta_i$. This motion causes the center of the Droplet to trace $\theta_i$ of an arc about $l_i$. The length of the chord with the same endpoints as the arc, $C$, i.e. the distance traveled by the center of the Droplet, is given by:
-%\begin{equation}\label{eq:arclength}
-%C=2 L \sin\left(\frac{\theta_i}{2}\right)
-%\end{equation}
-%Where $L$ is the distance between the robot's center and leg; the radius of the arc. To break this displacement in to its $x$ and $y$ components, we first need to know the angles of the triangle made by the chord and the leg. We can get this using the law of sines:
-%\begin{equation}
-%x = \arcsin\left(\frac{L}{C}\sin(\theta)\right) 
-%\end{equation}
-%Inserting the arc length $C$ from \ref{eq:arclength} gives:
-%\begin{align}
-%x &=\arcsin\left(\frac{L\sin(\theta)}{2 L \sin(\frac{\theta}{2})}\right) \\
-%\nonumber
-%   &=\arcsin\left(\cos\left(\frac{\theta}{2}\right)\right)
-%\end{align}
-%
-%Given this angle $x$, and the known angle between the Droplet's $x$\~axis and the leg ($\phi_1$), we can calculate the direction of the platform's displacement:
-%%
-%\begin{align}
-%\delta x_a &= C \cos(\pi - x - \phi)\\
-%\nonumber
-%\delta y_a &= C \sin(\pi - x - \phi)
-%\end{align}
-%
-%Note also that the orientation of the Droplet has changed by $\theta$. Next, consider a second pivot by $m_2$ of $-\theta$. By symmetry, we now have:
-%%
-%\begin{align}
-%\delta x_b &= -C\cos(\pi -x -\phi)\\
-%\nonumber
-%\delta y_b &= C \sin(\pi - x - \phi)
-%\end{align}
-%%
-%and the orientation has now changed by $-\theta$, putting the Droplet back in its original orientation. 
-
-In practice, the proposed locomotion scheme only works with one motor being active at a time. In addition to the motor placement that allows pivoting, this assumption allows us to overcome the limitations of the motors being in phase as described in \cite{Vartholomeos2005}. Therefore, the robots are not moving straight, but crawl forward in a S-shape. In order to move straight, this requires an initial turn to counter the offset introduced by the S-shape. 
-
-%The size of this error is a function of the arc of the step. As $\theta$ approaches $0$, so does the error. Similarly, when spinning each cycle of three motors doesn't leave us back at our exact original position, but it does bring us pretty close.
-
-%By restricting ourselves to these small-pivot ``steps'', we avoid the requirements of precise balance and motor-phase synchronization that causes trouble with more direct implementations \cite{Vartholomeos2006}.
-
-%To simplify, we focus on the platform moving in one of six directions: (0,180, $+/-$60, $+/-$120) degrees, as well as clockwise and counterclockwise rotation. It should be a straightforward extension to get arbitrary 3DoF motion by combining these directions.
-
 \subsection{Forward and inverse kinematics}
-We now attempt to map these stick-slip drivetrain kinematics to the more traditional kinematics of wheeled robots.
+We now attempt to map these stick-slip powertrain kinematics to the more traditional kinematics of wheeled robots.
 
-Whereas each pivot motion happens at the maximal speed of the platform, we can approximate the effective speeds $\dot{\theta}_i$ by introducing delays of varying length after each microscopic pivot. Assuming that low-level control of $\dot{\theta}_i$ and switching between pivot motions happens much faster than actual motion, we can reduce the proposed mechanism to a circular robot with three standard wheels, albeit without kinematic constraints, at the same location and orientation as the motors shown in Figure~\ref{DropletMotorDiagram}, and retractable legs. Here, the absence of kinematic constraints lets the standard wheels skid frictionlessly in any direction, whereas the retractable legs allows enabling and disabling pivot points, modeling the up and down movements of the platform. 
+Whereas each pivot motion happens at the maximal speed of the platform, we can approximate the effective speeds $\dot{\theta}_i$ by introducing delays of varying length after each microscopic pivot. Assuming that low-level control of $\dot{\theta}_i$ and switching between pivot motions happens much faster than actual motion, we can reduce the proposed mechanism to a circular robot with three standard wheels, albeit without kinematic constraints, at the same location and orientation as the motors shown in Figure~\ref{DropletMotorDiagram}, and with retractable legs. Here, the absence of kinematic constraints lets the standard wheels skid frictionlessly in any direction, while the retractable legs allows enabling and disabling pivot points, modeling the up and down movements of the platform. 
 
-In this reduced model, each motor $m_0$, $m_1$, and $m_2$ controls the angular velocity $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$ around its associated pivot point opposite of the motor. This lets us derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$.
-Here we assume the $y$-axis to be orthogonal to the spinning direction of motor 2, and the $x$-axis orthogonal to the $y$-axis, as seen in Figure~\ref{DropletMotorDiagram}.
+In this reduced model, each motor $m_1$, $m_2$, and $m_3$ controls the angular velocity $\dot{\theta}_1$, $\dot{\theta}_2$ and $\dot{\theta}_3$ around its associated pivot point opposite of the motor. This lets us derive the following forward kinematic equations in the robot coordinate frame $\dot{x}_r$, $\dot{y}_r$ and $\dot{\theta}_r$.
+Here we assume the $y$-axis to be orthogonal to the spinning direction of motor 3, and the $x$-axis orthogonal to the $y$-axis, as seen in Figure~\ref{DropletMotorDiagram}.
 \begin{align}\label{eq:fwd}
-\dot{x}_r & = -L \dot{\theta}_0 \cos(2 \pi / 3) + L \dot{\theta}_1 \sin(\pi / 6) + L \dot{\theta}_2\notag\\
-\dot{y}_r & =  L \dot{\theta}_0 \sin(2 \pi / 3) - L \dot{\theta}_1 \cos(\pi / 6)\notag\\
-\dot{\theta}_r & = \dot{\theta}_0 + \dot{\theta}_1 + \dot{\theta}_2
+\dot{x}_r &= -\ell \dot{\theta}_1 \cos(2 \pi / 3) + \ell \dot{\theta}_2 \sin(\pi / 6) + \ell \dot{\theta}_3\notag\\
+\dot{y}_r &=  \ell \dot{\theta}_1 \sin(2 \pi / 3) - \ell \dot{\theta}_2 \cos(\pi / 6)\\
+\dot{\theta}_r &= \dot{\theta}_1 + \dot{\theta}_2 + \dot{\theta}_3\notag
 \end{align}
-Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $l$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. Notice that motor 2 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
+Here, we assume positive $\theta_i$ to be aligned with the direction of thrust of motor $m_i$ and each leg having distance $\ell$ from the motors. That is, if all motors spin in the same direction, they all contribute to $\dot{\theta}_r$ in the same way. Notice that motor 3 does not contribute to $\dot{y}_r$ as it spins orthogonally to the y-axis.
 
-Equation \ref{eq:fwd} is a linear system with three unknowns, and we can solve for $\dot{\theta}_0$, $\dot{\theta}_1$ and $\dot{\theta}_2$:
+Equation \ref{eq:fwd} is a linear system with three unknowns, and we can solve for $\dot{\theta}_1$, $\dot{\theta}_2$ and $\dot{\theta}_3$:
 \begin{align}\label{eq:ik}
-\dot{\theta}_0 & = -\frac{\dot{x}_r}{L} + \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\notag\\
-\dot{\theta}_1 & = -\frac{\dot{x}_r}{L} - \frac{\dot{y}_r}{\sqrt{3}L} + \dot{\theta}_r\notag\\
-\dot{\theta}_2 & = \frac{2 \dot{x}_r}{L} - \dot{\theta}_r
+\dot{\theta}_1 & = -\frac{\dot{x}_r}{\ell} + \frac{\dot{y}_r}{\sqrt{3}\ell} + \dot{\theta}_r\notag\\
+\dot{\theta}_2 & = -\frac{\dot{x}_r}{\ell} - \frac{\dot{y}_r}{\sqrt{3}\ell} + \dot{\theta}_r\\
+\dot{\theta}_3 & = \frac{2 \dot{x}_r}{\ell} - \dot{\theta}_r\notag
 \end{align}
 
 The rotational velocity values from \eqref{eq:ik} can now be transformed to motor values supplied to the Droplet to achieve desired motion in the $\{\dot{x}_r, \dot{y}_r, \dot{\theta}_r\}$ coordinate frame using auto-calibration techniques discussed in the following section.
@@ -204,12 +157,12 @@ Additional challenges arising from low-cost hardware is that achieving equal ste
 It is possible to calibrate each platform manually, by setting values and eyeballing how well they work. As stated earlier, however, this platform is motivated by a desire for low-cost, large scale robot swarms.  Manual calibration of a swarm of thousands of robots would be completely impractical, and so we automate the process.
 
 \subsection{Experimental Setup}
-The motors are kept at a fixed $100\%$ duty cycle. Each step, we turn a motor on for a fixed amount of time, $t_{\text{on}}$, plus some offset, $\tau$,  which varies for each motor direction. Next, all motors are off for a fixed amount of time, $t_{\text{off}}$. Figure~\ref{fig:pwmSignals} shows this in more detail. We denote the vector of calibration values for each motor direction $\vec{\tau}$. Calibration is done by changing the $\vec{\tau}$ values such that the pivot induced by the motors is the same. These values are integers of magnitude $^1/_{32}$$ms$. For our platform, $t_{\text{on}}$ is $30ms$, which was determined to be the minimum amount of time required to induce pivoting for a typical motor. Similarly, $t_{\text{off}}$ is the time required for vibrations of the system to settle---a shorter off time causes platform instability.
+The motors are kept at a fixed $100\%$ duty cycle. Each step, we turn a motor on for a fixed amount of time, $t_{\text{on}}$, plus some offset, $\tau$,  which varies for each motor direction. Next, all motors are off for a fixed amount of time, $t_{\text{off}}$. Figure~\ref{fig:pwmSignals} shows this in more detail. We denote the vector of calibration values for each motor direction $\vec{\tau}$. Calibration is done by changing the $\vec{\tau}$ values such that the pivot induced by the motors is the same. These values are integers of magnitude $^1/_{32}\,\mathrm{ms}$. For our platform, $t_{\text{on}}$ is $30\,\mathrm{ms}$, which was determined to be the minimum amount of time required to induce pivoting for a typical motor. Similarly, $t_{\text{off}}$ is the time required for vibrations of the system to settle---a shorter off time causes platform instability. For our platform, $t_{\text{off}}$ is $10\,\mathrm{ms}$.
 
 \begin{figure}[!htb]
 \centering
 \subfile{PWMfigure}
-\caption{The PWM signals for motion in the 0 direction. If both forward (FW) and reverse (RV) are high, the motor is braking. If only one signal is high, the motor rotates in that direction. Thus, to spin forward we keep FW high and drop RV low when we want the motor to actually spin.}
+\caption{The PWM signals for motion in the negative $y$ direction; towards $m3$. for motors $m_1$ \& $m_2$. $m_3$ is inactive during this motion. If both A and B are high, the motor is braking. If both are low, the motor is inactive. If only one signal is high, the motor rotates in that direction.}
 \label{fig:pwmSignals}
 \end{figure}
 
