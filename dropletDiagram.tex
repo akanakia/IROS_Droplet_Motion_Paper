@@ -26,23 +26,26 @@
 	\pgftransformrotate{\dropletOrient}
 		\draw[thick] (0cm,0cm) circle(2.2cm);
 		\draw[gray!20] (0cm, 0cm) -- (2.2cm,0cm);
+%		\draw[] (-120:\motDist) -- (60:\legDist) node[below, midway] {\large$\ell$}; %This is the line showing '\ell'
 		\foreach \i in {1,...,3} {
 			\node[rectangle,draw=black,fill=\motShade,minimum width=\motWidth, minimum height=\motHeight, 
 						rotate around={(-\i*120-240+\dropletOrient):(0,0)},label={[label distance=-0.05cm]-160:$m_\i$}] at (-120*\i-240:\motDist) {};
 			\node[circle, draw=none, fill=\legShade, inner sep=\legRad,rotate around={-\i*120-60:(0,0)},label={[label distance=-0.15cm]-10:$l_\i$}] at (-60-120*\i:\legDist) {};
 		}
-		\draw[] (0cm, 0cm) -- (60:\legDist) node[below, midway] {\large$\ell$};
+
 
 		%\node[inner sep=0mm, fill=white] at (-\rxPhi*0.5+\txPhi*0.5 + \rxPhi:0.35cm) {$\theta$};
 
 	\pgftransformrotate{-\dropletOrient}
 
-	\begin{scope}[rotate=30]
+	\begin{scope}[rotate=\dropletOrient-60]
 		\draw[->,semithick,black,>=latex,opacity=0.5] (0,0) -- (3,0);
 		\draw[->,semithick,black,>=latex,opacity=0.5] (0,0) -- (0,3);
 		\node[anchor=south,opacity=1.5] at (3,0) {$y$};
 		\node[anchor=south,opacity=1.5] at (0,3) {$x$};
 	\end{scope}
+
+	\draw[|-|,black, thick] (-2.5,-2.2) -- (-2.5, 2.2) node[rotate=90,midway,anchor=south] {$2.2\,\mathrm{cm}$}; 
 
 %	\draw[thin] (0,0) arc (-30:-30+\pivotTheta:\legDist) node[right,midway, inner sep=0mm,label={[label distance=-0.02cm]365:$\theta$}] {};
 %	\draw[gray] (150:\legDist) -- (\shiftX, \shiftY);
