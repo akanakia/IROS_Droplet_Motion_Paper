@@ -160,7 +160,7 @@ Additional challenges arising from low-cost hardware is that achieving equal ste
 It is possible to calibrate each platform manually, but this platform is motivated by a desire for low-cost, large scale robot swarms.  Manual calibration of a swarm of thousands of robots would be completely impractical, and so we automate the process. 
 
 \subsection{Experimental Setup}
-The motors are kept at a fixed $100\%$ duty cycle. Each step, we turn a motor on for a fixed amount of time, $t_{\text{on}}$, plus some offset, $\tau$,  which varies for each motor direction. Next, all motors are off for a fixed amount of time, $t_{\text{off}}$. Figure~\ref{fig:pwmSignals} shows this in more detail. We denote the vector of calibration values for each motor direction $\vec{\tau}$. Calibration is done by changing the $\vec{\tau}$ values such that the pivot induced by the motors is the same. These values are integers of magnitude $^1/_{32}\,\mathrm{ms}$. For our platform, $t_{\text{on}}$ is $30\,\mathrm{ms}$, which was determined to be the minimum amount of time required to induce pivoting for a typical motor. Similarly, $t_{\text{off}}$ is the time required for vibrations of the system to settle---a shorter off time causes platform instability. For our platform, $t_{\text{off}}$ is $10\,\mathrm{ms}$.
+The motors are kept at a fixed $100\%$ duty cycle. Each step, we turn a motor on for a fixed amount of time, $t_{\text{on}}$, plus some offset, $\tau$,  which varies for each motor direction. Next, all motors are off for a fixed amount of time, $t_{\text{off}}$. Figure~\ref{fig:pwmSignals} shows this in more detail. We denote the vector of calibration values for each motor direction $\Tau=\{\tau_1, \tau_2, \tau_3\}$. Calibration is done by changing the $\tau$ values such that the pivot induced by the motors is the same. These values are integers of magnitude $^1/_{32}\,\mathrm{ms}$. For our platform, $t_{\text{on}}$ is $30\,\mathrm{ms}$, which was determined to be the minimum amount of time required to induce pivoting for a typical motor. Similarly, $t_{\text{off}}$ is the time required for vibrations of the system to settle---a shorter off time causes platform instability. For our platform, $t_{\text{off}}$ is $10\,\mathrm{ms}$.
 
 \begin{figure}[!htb]
 \centering
@@ -236,7 +236,7 @@ We performed calibration for four different Droplets. Figure \ref{fig:radiiConve
 \begin{table}[!htb]
 \centering
 \begin{tabular}{r|c|c|c|c|c|c}
- ID & $\tau_0$ & $-\tau_0$ & $\tau_1$ & $-\tau_1$ & $\tau_2$ & $-\tau_2$ \\
+ ID & $\tau_1$ & $-\tau_1$ & $\tau_2$ & $-\tau_2$ & $\tau_3$ & $-\tau_3$ \\
 \hline
 15 & 68 & -1 & 56 & -5 & \cellcolor{gray!15} 40 & \cellcolor{gray!15} 0\\ 
 18 & 84 & -89 & 84 & 202 & \cellcolor{gray!15} 128 & \cellcolor{gray!15} 290\\
@@ -275,7 +275,7 @@ Calibrating the Droplets via an overhead camera and off-the-shelf computer visio
 
 The proposed forward and inverse kinematics are an approximation as the robots do not move in straight lines, but using a sequence of pivoting steps. While this effect is negligible over distances in the order of the robot's diameter, it is prohibitive to reach the accuracies that the stick-slip drive is capable of. For example, when ``spinning in place'', the robots' coordinate system moves in a radius in the order of millimeters. In the future, we wish to explore motion planning techniques to improve accuracy by combining a sequence of motions, much like a knight on a chess board needs to do to reach a neighboring cell. 
 
-Similarly, the inverse kinematics solutions in Equation \ref{eq:ik} provide correct, but possibly sub-optimal solutions. For example, solving for $\dot{x_r}=0$, $\dot{y}=0$ and $\dot{\theta}_r$ arbitrary, results in $\dot{\theta}_0=\dot{\theta}_r$, $\dot{\theta}_1=\dot{\theta}_r$ and $\dot{\theta}_2=-\dot{\theta}_r$. These values will let the robot spin in place with speed $\dot{\theta}_r$, these results are far from the optimal values $\dot{\theta}_0=\dot{\theta}_1=\dot{\theta}_2=\frac{\dot{\theta}_r}{3}$. 
+Similarly, the inverse kinematics solutions in Equation \ref{eq:ik} provide correct, but possibly sub-optimal solutions. For example, solving for $\dot{x_r}=0$, $\dot{y}=0$ and $\dot{\theta}_r$ arbitrary, results in $\dot{\theta}_1=\dot{\theta}_r$, $\dot{\theta}_2=\dot{\theta}_r$ and $\dot{\theta}_3=-\dot{\theta}_r$. These values will let the robot spin in place with speed $\dot{\theta}_r$, these results are far from the optimal values $\dot{\theta}_1=\dot{\theta}_2=\dot{\theta}_3=\frac{\dot{\theta}_r}{3}$. 
 
 \section{Conclusion}
 We presented an omni-directional powertrain and miniature robotic platform that relies on low-cost vibration motors. We have shown how we can overcome challenges with synchronization and manufacturing variability, which have thus far prevented this approach from practical viability. 
