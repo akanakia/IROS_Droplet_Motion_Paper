@@ -49,8 +49,8 @@
 	\titlepage
 \end{frame}
 \begin{frame}{Motivation \& Background}
-	\begin{columns}[c]
-		\column{0.65\textwidth}
+\begin{columns}[c]
+	\column{0.65\textwidth}
 		\begin{itemize}
 			\item Stick-slip motion.
 				\note[item]<1->{
@@ -67,25 +67,37 @@
 					\end{itemize}
 				}
 		\end{itemize}
-		\column{0.35\textwidth}
+	\column{0.35\textwidth}
 		\begin{figure}
 			\centering
 			\includegraphics[width=\textwidth]{Images/droplets.png}
 		\end{figure}
-		\vspace{-2em}
+\end{columns}
 		\begin{figure}
 			\centering
-			\subfile{dropletDiagramPresentation}
+			\makebox[\textwidth][c]{
+			\subfile{singleDoFModelPresentation}
+			}
 		\end{figure}
-	\end{columns}
+
 \end{frame}
 \begin{frame}
 	\frametitle{The Method}
-	\begin{itemize}
-		\item With motors positioned opposite the robots' legs, the motor's rotation causes the robot to pivot about the opposite leg.
-		\item The robot can then take a small `step'; the result of turning on one motor for a short time.
-			\note[item]<1->{Default 'on' time is 30ms. With calibration, this value is adjusted by ~10ms (on the high end) in either direction. 3ms is more typical.}
-		\item Overall motion is achieved by taking steps on alternating motors.
-	\end{itemize}
+			\begin{itemize}
+				\item Motors opposite legs.
+				\item One motor on at a time gives `steps'.
+					\note[item]<1->{Default 'on' time is 30ms. With calibration, this value is adjusted by ~10ms (on the high end) in either direction. 3ms is more typical.}
+				\item Chain together a sequence of steps to walk.
+			\end{itemize}
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.4\textwidth]{Images/step.png}
+				\hspace{2em}
+				\includegraphics[width=0.4\textwidth]{Images/walking.png}
+			\end{figure}
+			\begin{figure}
+				\centering
+
+			\end{figure}
 \end{frame}
 \end{document}
