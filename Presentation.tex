@@ -2,11 +2,12 @@
 
 
 %\documentclass[letterpaper, 10pt, conference]{IEEEtran}
-\documentclass[notes=off]{beamer}
+\documentclass[notes]{beamer}
 \usepackage{tikz}
 \usetikzlibrary{calc,decorations.markings,arrows, fadings}
 \usepackage{tikz-timing}
 \usepackage{media9}
+%\usepackage{multimedia}
 \usepackage{amsmath}
 \usepackage{xifthen}
 \usepackage{amsfonts}
@@ -20,7 +21,7 @@
 \usepackage{subfiles}
 \usepackage{url}
 \usepackage[outline]{contour}
-
+\usepackage{hyperref}
 \contourlength{0.18em}
 
 \usetheme{Copenhagen}
@@ -84,7 +85,7 @@
 \begin{frame}
 	\begin{figure}
 		\centering
-		%\includegraphics[]{dropletWalkingVideo}
+				\includemedia[activate=pagevisible, noplaybutton, width=\textwidth,flashvars={loop=true}]{\includegraphics{Images/realWalking.png}}{Images/realWalking.swf}
 	\end{figure}
 	\note{We implemented and tested this design on the Droplets swarm robotics platform, and I have a few robots to demonstrate with in the poster session.}
 \end{frame}
@@ -103,16 +104,29 @@
 		\column{0.4\textwidth}
 			\begin{figure}
 				\centering
-				\includegraphics[width=\textwidth]{Images/Step.png}				
-%\includemedia[activate=pageopen,width=\textwidth,addresource=Images/Step.mp4,flashvars={source=Images/Step.mp4&loop=true}]{}{VPlayer.swf}
-%\includemedia[activate=pageopen, width=\textwidth]{}{Images/Step_avi.flv}
+				\includemedia[activate=pagevisible, noplaybutton, width=\textwidth,flashvars={loop=true}]{\includegraphics{Images/Step.png}}{Images/Step.swf}
 			\end{figure}
 			\note[item]<1->{This animation is an exaggerated demonstration of a single `step'. In practice one step takes about $30$ms.}
 			\begin{figure}
 				\centering
-				\includegraphics[width=\textwidth]{Images/Walk.png}
+				\includemedia[activate=pagevisible, noplaybutton, width=0.8\textwidth]{\includegraphics{Images/Walk.png}}{Images/Walk.swf}
 			\end{figure}
 			\note[item]<1->{This animation shows a robot walking by sequencing steps together.}
 	\end{columns}
+\end{frame}
+\begin{frame}
+	\frametitle{Calibration}
+		\begin{itemize}
+			\item Downside of low cost is inconsistent performance across different motors.
+			\note[item]<1->{Now, one trade-off with these low-cost actuators is that the performance of the vibration motors varies.}
+			\note[item]<1->{In order for the robot to walk straight, each individual step must be of the same magnitude. Without calibration, this is not the case.}
+			\item To mitigate this problem, each robot is calibrated.
+			\begin{itemize}
+				\item If a motor tends to be weaker, turn it on for longer.
+			\end{itemize}
+			\note[item]<1->{Thus, we calibrate each robot by turning on weaker motors for slightly longer than other motors. In practice most of these adjustment values are around 3ms, or 10\% longer.}
+			\item We also present a method for automatic calibration.
+			\note[item]<1->{Details on the automatic calibration available during poster session.}
+		\end{itemize}
 \end{frame}
 \end{document}
